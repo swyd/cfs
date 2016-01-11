@@ -1,0 +1,65 @@
+<div class="panel panel-default" ng-if="$root.user.roles.ROLE_ADMIN">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-xs-12">
+				<div>
+
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label>Korisnicko ime:</label> <input type="text"
+								class="form-control" name="username" ng-model="vm.user.username">
+						</div>
+						<div class="form-group">
+							<label>Password:</label> <input type="text" class="form-control"
+								name="password" ng-model="vm.user.password">
+						</div>
+						<div class="form-group">
+							<label>Ime i prezime:</label> <input type="text"
+								class="form-control" name="name" ng-model="vm.user.name">
+						</div>
+						<div class="form-group">
+							<label>Da li je admin: <input type="checkbox" value=""
+								class="form-control" name="isAdmin" ng-model="vm.user.isAdmin"
+								ng-checked="vm.user.isAdmin">
+							</label>
+						</div>
+
+						<button type="button" class="btn btn-default pull-right"
+							ng-click="vm.editingInProgress ? vm.saveEditedUser() : vm.createUser()">Sacuvaj</button>
+
+
+						<br /> <br /> <br />
+
+						<div class="col-xs-12">
+							<table ng-table="vm.users" class="table" show-filter="true">
+								<tr ng-repeat="user in $data">
+									<td title="'Broj ugovora'" filter="{ id: 'number'}"
+										sortable="'id'">{{user.id}}</td>
+									<td title="'Ime i prezime'" filter="{ name: 'text'}"
+										sortable="'name'">{{user.name}}</td>
+									<td title="'Da li je Admin'" filter="{ isAdmin: 'text'}"
+										sortable="'isAdmin'">{{user.isAdmin}}</td>
+									<td title="'Promeni rolu'">
+										<button type="button" class="btn btn-warning"
+											ng-click="vm.changeRole(user.id)">Izvrsi</button>
+									</td>
+									<td title="'Izmeni Usera'">
+										<button type="button" class="btn btn-primary"
+											ng-click="vm.editUser(user)">Izmeni</button>
+									</td>
+									<td title="'Obrisi'">
+										<button type="button" class="btn btn-danger"
+											ng-confirm-click="Da li ste sigurni da zelite da obrisete ?"
+											confirmed-click="vm.deleteUser(user.id)">Obrisi</button>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
