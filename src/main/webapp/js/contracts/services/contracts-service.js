@@ -1,6 +1,6 @@
 (function(angular){
 	
-	angular.module('gaintMedia').factory('ContractService', function($http, $q) {
+	angular.module('csf').factory('ContractService', function($http, $q) {
 		
 		return {
 			getContracts: getContracts,

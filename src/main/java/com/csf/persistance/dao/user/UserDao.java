@@ -8,6 +8,8 @@ import com.csf.persistence.entity.User;
 
 public interface UserDao extends GenericDao<User, Integer>, UserDetailsService {
 
-	User findUserByEmail(String username) throws UsernameNotFoundException;
+	User findUserByEmail(String email) throws UsernameNotFoundException;
+
+	User findUserByUsername(String username) throws UsernameNotFoundException;
 
 }

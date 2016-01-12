@@ -1,7 +1,7 @@
 angular
 		.module(
-				'gaintMedia',
-				[ 'ngRoute', 'ngCookies', 'ngMessages', 'gaintMedia.services',
+				'csf',
+				[ 'ngRoute', 'ngCookies', 'ngMessages', 'csf.services',
 						'daterangepicker', 'ngTable' ])
 		.config(
 				[
@@ -17,10 +17,10 @@ angular
 										controller : LoginController
 									})
 									.when(
-											'/time-service',
+											'/time-slots',
 											{
-												templateUrl : 'partials/new-service-template.html',
-												controller : 'NewServiceController',
+												templateUrl : 'partials/time-slots.html',
+												controller : 'TimeSlotsController',
 												controllerAs : 'vm'
 											})
 									.when(

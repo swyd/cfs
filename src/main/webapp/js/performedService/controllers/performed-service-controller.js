@@ -1,6 +1,6 @@
 (function(angular) {
 
-	angular.module('gaintMedia').controller('PerformedServiceController',
+	angular.module('csf').controller('PerformedServiceController',
 			controller);
 
 	function controller($scope, $http, PerformedService, $filter, NgTableParams) {

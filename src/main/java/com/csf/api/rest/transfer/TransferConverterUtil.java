@@ -68,8 +68,11 @@ public class TransferConverterUtil {
 	}
 	
 	public static TimeSlotTransfer convertTimeSlotToTransfer(TimeSlot timeSlot){
-		
-		return null;
+		TimeSlotTransfer timeSlotTransfer = new TimeSlotTransfer();
+		timeSlotTransfer.setId(timeSlot.getId());
+		timeSlotTransfer.setLimit(timeSlot.getLimit());
+		timeSlotTransfer.setStartsAt(timeSlot.getStartsAt());
+		return timeSlotTransfer;
 	}
 	
 //	public static TimeSlotTransfer convertToPacketTransfer(TimeSlotUsage packet) {

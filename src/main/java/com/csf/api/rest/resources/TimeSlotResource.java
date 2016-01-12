@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import com.csf.api.rest.transfer.TransferConverterUtil;
 import com.csf.api.rest.transfer.model.TimeSlotTransfer;
 import com.csf.persistence.entity.TimeSlot;
 import com.csf.persistence.entity.TimeSlotUsage;
+import com.csf.persistence.entity.User;
 import com.csf.service.timeslot.TimeSlotService;
 
 @RestController
@@ -39,6 +42,15 @@ public class TimeSlotResource {
 		return TransferConverterUtil.convertTimeSlotToTransfer(timeSlots);
 	}
 
+	@RequestMapping(path = "/all/remaining", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
+	@PreAuthorize(value = "isAuthenticated()")
+	public List<TimeSlotTransfer> getAllTimeSlotsWithRemaining() {
+
+		List<TimeSlotTransfer> timeSlots = timeSlotService.findAllWithRemainingForDate(new Date());
+
+		return timeSlots;
+	}
+
 	@RequestMapping(path = "/usage/all/today", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "isAuthenticated()")
 	public List<TimeSlotUsage> getAllTimeSlotUsagesForToday() {
@@ -57,16 +69,26 @@ public class TimeSlotResource {
 		return timeSlotUsage;
 	}
 
+	@RequestMapping(path = "/usage/{timeSlotId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+	@PreAuthorize(value = "isAuthenticated()")
+	public TimeSlotUsage createSlotUsage(@PathVariable("timeSlotId") Integer timeSlotId) {
+
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		TimeSlotUsage timeSlotUsage = timeSlotService.create(user, timeSlotId);
+
+		return timeSlotUsage;
+	}
+
 	@RequestMapping(path = "/usage/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "isAuthenticated()")
 	public List<TimeSlotUsage> getAllTimeSlotUsagesForTommorow(
-			@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern="ddMMyyyy") Date fromDate,
-			@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern="ddMMyyyy") Date toDate) {
+			@RequestParam(name = "fromDate", required = false) @DateTimeFormat(pattern = "ddMMyyyy") Date fromDate,
+			@RequestParam(name = "toDate", required = false) @DateTimeFormat(pattern = "ddMMyyyy") Date toDate) {
 
 		List<TimeSlotUsage> timeSlotUsage = timeSlotService.findAllTimeSlotUsage(fromDate, toDate);
 
 		return timeSlotUsage;
 	}
-
 
 }

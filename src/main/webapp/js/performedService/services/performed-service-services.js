@@ -1,6 +1,6 @@
 (function(angular){
 	
-	angular.module('gaintMedia').factory('PerformedService', function($http, $q) {
+	angular.module('csf').factory('PerformedService', function($http, $q) {
 		
 		return {
 			preformSearch: preformSearch,

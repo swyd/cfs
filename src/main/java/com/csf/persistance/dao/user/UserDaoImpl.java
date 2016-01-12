@@ -13,45 +13,66 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.csf.api.rest.exception.RestException;
 import com.csf.persistance.dao.JpaDao;
 import com.csf.persistence.entity.User;
 
 @Repository("userDao")
 public class UserDaoImpl extends JpaDao<User, Integer> implements UserDao {
 
-  public UserDaoImpl() {
-    super(User.class);
-  }
+	public UserDaoImpl() {
+		super(User.class);
+	}
 
-  @Override
-  @Transactional(readOnly = true)
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = findUserByEmail(username);
-    if (null == user) {
-      throw new UsernameNotFoundException("The user with name " + username + " was not found");
-    }
+	@Override
+	@Transactional(readOnly = true)
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = findUserByUsername(username);
+		if (null == user) {
+			throw new RestException("The user with name " + username + " was not found");
+		}
 
-    return user;
-  }
+		return user;
+	}
 
-  @Override
-  @Transactional(readOnly = true)
-  public User findUserByEmail(String email) {
-    final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
-    final CriteriaQuery<User> criteriaQuery = builder.createQuery(this.entityClass);
+	@Override
+	@Transactional(readOnly = true)
+	public User findUserByUsername(String username) {
+		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
+		final CriteriaQuery<User> criteriaQuery = builder.createQuery(this.entityClass);
 
-    Root<User> root = criteriaQuery.from(this.entityClass);
-    Path<String> emailPath = root.get("email");
-    criteriaQuery.where(builder.equal(emailPath, email));
+		Root<User> root = criteriaQuery.from(this.entityClass);
+		Path<String> usernamePath = root.get("username");
+		criteriaQuery.where(builder.equal(usernamePath, username));
 
-    TypedQuery<User> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
-    List<User> users = typedQuery.getResultList();
+		TypedQuery<User> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
+		List<User> users = typedQuery.getResultList();
 
-    if (users.isEmpty()) {
-      return null;
-    }
+		if (users.isEmpty()) {
+			return null;
+		}
 
-    return users.iterator().next();
-  }
+		return users.iterator().next();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public User findUserByEmail(String email) {
+		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
+		final CriteriaQuery<User> criteriaQuery = builder.createQuery(this.entityClass);
+
+		Root<User> root = criteriaQuery.from(this.entityClass);
+		Path<String> emailPath = root.get("email");
+		criteriaQuery.where(builder.equal(emailPath, email));
+
+		TypedQuery<User> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
+		List<User> users = typedQuery.getResultList();
+
+		if (users.isEmpty()) {
+			return null;
+		}
+
+		return users.iterator().next();
+	}
 
 }

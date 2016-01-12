@@ -1,6 +1,6 @@
 (function(angular) {
 
-	angular.module('gaintMedia').controller('ContractsController', controller);
+	angular.module('csf').controller('ContractsController', controller);
 
 	function controller($scope, $http, $filter, ContractService, NgTableParams) {
 		var vm = this;

@@ -1,6 +1,6 @@
 	(function(angular){
 
-	angular.module('gaintMedia')
+	angular.module('csf')
 	.controller('UsersController', controller);
 
 	function controller($scope, $http, UsersService, NgTableParams){

@@ -9,6 +9,8 @@ import com.csf.persistence.entity.TimeSlotUsage;
 public interface TimeSlotUsageDao extends GenericDao<TimeSlotUsage, Integer>{
 
 	List<TimeSlotUsage> findAll(Date fromDate, Date toDate);
+
+	List<TimeSlotUsage> findAllForDate(Date date);
 	
 	
 }

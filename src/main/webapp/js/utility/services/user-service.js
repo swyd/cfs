@@ -1,6 +1,6 @@
 (function(angular){
 	
-	angular.module('gaintMedia.services').factory('UserService', function($resource) {
+	angular.module('csf.services').factory('UserService', function($resource) {
 		
 		return $resource('rest/user/:action', {},
 			{

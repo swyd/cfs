@@ -10,10 +10,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
+@NamedQueries({ @NamedQuery(name = "TimeSlotUsage.findAllForDate", query = "SELECT t FROM TimeSlotUsage t WHERE "
+		+ "t.usageDate = :usageDate") })
 @Table(name = "csf_time_slot_usage")
 public class TimeSlotUsage implements Serializable {
 

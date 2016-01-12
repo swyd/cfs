@@ -6,6 +6,45 @@ ng-hide {
 	display: none;
 }
 
+.buttons-container {
+	padding-top: 30px;
+	padding-bottom: 30px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.button-container {
+	padding-left: 30px;
+	margin: 0 auto;
+	display: inline-block;
+}
+
+.clearBoth {
+	clear: both;
+}
+
+.btn-xlarge {
+	border-color: #83BC4A;
+	background-color: black;
+	color: #83BC4A;
+	width: 120px;
+	height: 90px;
+	padding: 18px 28px;
+	font-size: 42px; // change this to your desired size line-height :
+	normal;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+.form-horizontal .control-label {
+	color: white;
+}
+
+.h2, h2 {
+	color: white;
+}
+
 .loader {
 	font-size: 36px;
 	line-height: 36px;
@@ -44,7 +83,7 @@ ng-hide {
 
 body {
 	padding-top: 60px;
-	background-color: white;
+	background-color: black;
 }
 
 .grid-cell-right {
@@ -111,29 +150,28 @@ body {
 	margin: 0 auto;
 }
 
-.print-form-uplatnica-container{
+.print-form-uplatnica-container {
 	width: 770.28px;
 	height: 300.89px;
 	margin: 0 auto;
 }
 
 #table_left {
-    width: 355px;
-    float: left;
-    padding-right: 30px;
-    padding-left: 90px;
+	width: 355px;
+	float: left;
+	padding-right: 30px;
+	padding-left: 90px;
 }
 
-#table_left p{
-    padding-top: 40px;
+#table_left p {
+	padding-top: 40px;
 }
 
-
-#inline_div{
+#inline_div {
 	display: block;
 	width: 300px;
-    float: left;
-    padding-left: 10px;
+	float: left;
+	padding-left: 10px;
 }
 
 #inline_div p {
@@ -143,20 +181,24 @@ body {
 }
 
 .table_right {
-    width: 300px;
-    float: left;
+	width: 300px;
+	float: left;
 }
+
 .table_spacing_row_1 {
-	padding-top: 38px;   
+	padding-top: 38px;
 }
+
 .table_spacing_row_2 {
-	padding-top: 30px;   
+	padding-top: 30px;
 }
+
 .table_spacing_row_3 {
-    padding-top: 22px;
-    padding-left: 8px;
+	padding-top: 22px;
+	padding-left: 8px;
 }
-.print-form-uplatnica{
+
+.print-form-uplatnica {
 	padding-top: 20px !important;
 	padding-left: 5px !important;
 	padding-right: 5px !important;

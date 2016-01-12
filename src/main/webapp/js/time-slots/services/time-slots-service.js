@@ -1,47 +1,19 @@
 (function(angular){
 	
-	angular.module('csf.services').factory('UsersService', function($http, $q) {
+	angular.module('csf').factory('TimeSlotsService', function($http, $q) {
 		
 		return {
-			getUsers: getUsers,
-			createUser: createUser,
-			changeRole: changeRole,
-			editUser: editUser,
-			deleteUser: deleteUser
+			findAll: findAll,
+			findAllWithRemaining: findAllWithRemaining,
+			findAllTimeSlotUsage: findAllTimeSlotUsage,
+			createAppointment: createAppointment
+			
 		}
 		
-		function deleteUser(id) {
+		function findAll(packet){
 			var deferred = $q.defer();
 
-			$http.delete('/rest/user/' + id)
-			.success(function(data){
-				deferred.resolve(data);
-			})
-			.catch(function(err) {
-				deferred.reject(err);
-			});
-
-			return deferred.promise;
-		}
-		
-		function getUsers() {
-			var deferred = $q.defer();
-
-			$http.get('/rest/user/all')
-			.success(function(data){
-				deferred.resolve(data);
-			})
-			.catch(function(err) {
-				deferred.reject(err);
-			});
-
-			return deferred.promise;
-		}
-
-		function createUser(data) {
-			var deferred = $q.defer();
-
-			$http.post('/rest/user/', data)
+			$http.get('/rest/timeslot/all')
 			.success(function(data){
 				deferred.resolve(data);
 			})
@@ -52,34 +24,50 @@
 			return deferred.promise;
 		}
 		
-		function changeRole(id) {
+		function findAllWithRemaining(){
 			var deferred = $q.defer();
 
-			$http.post('/rest/user/' + id + '')
+			$http.get('/rest/timeslot/all/remaining')
 			.success(function(data){
 				deferred.resolve(data);
 			})
 			.catch(function(err) {
 				deferred.reject(err);
-			});
-
-			return deferred.promise;
-		}
-
-		function editUser(user) {
-			var deferred = $q.defer();
-
-			$http.put('/rest/user/' + user.id + '', user)
-			.success(function(data){
-				deferred.resolve(data);
-			})
-			.catch(function(err) {
-				deferred.reject(err);
-			});
+			}); 	
 
 			return deferred.promise;
 		}
 		
+		function findAllTimeSlotUsage(){
+			var deferred = $q.defer();
+
+			$http.get('/rest/timeslot/usage/all')
+			.success(function(data){
+				deferred.resolve(data);
+			})
+			.catch(function(err) {
+				deferred.reject(err);
+			}); 	
+
+			return deferred.promise;
+		}
+		
+		function createAppointment(timeSlotId){
+			var deferred = $q.defer();
+
+			$http.post('/rest/timeslot/usage/'+timeSlotId+'')
+			.success(function(data){
+				deferred.resolve(data);
+			})
+			.catch(function(err) {
+				deferred.reject(err);
+			}); 	
+
+			return deferred.promise;
+		}
+
+
 	});
+
 
 })(angular);

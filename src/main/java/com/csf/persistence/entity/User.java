@@ -2,6 +2,7 @@ package com.csf.persistence.entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,6 +48,15 @@ public class User implements Serializable, UserDetails {
 
 	@Column(name = "isactive")
 	private Boolean isActive;
+	
+	@Column(name = "date_paid")
+	private Date datePaid;
+	
+	@Column(name = "date_expiring")
+	private Date dateExpiring;
+
+	@Column(name = "username", unique = true, length = 16, nullable = false)
+	private String username;
 
 	public User() {
 		/* Reflection instantiation */
@@ -151,7 +161,12 @@ public class User implements Serializable, UserDetails {
 
 	@Override
 	public String getUsername() {
-		return this.email;
+		return this.username;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
+	
 }
