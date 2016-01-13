@@ -16,8 +16,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@NamedQueries({ @NamedQuery(name = "TimeSlotUsage.findAllForDate", query = "SELECT t FROM TimeSlotUsage t WHERE "
-		+ "t.usageDate = :usageDate") })
+@NamedQueries({
+		@NamedQuery(name = "TimeSlotUsage.findAllForDate", query = "SELECT t FROM TimeSlotUsage t WHERE "
+				+ "t.usageDate = :usageDate"),
+		@NamedQuery(name = "TimeSlotUsage.checkIfExistsForDate", query = "SELECT COUNT(t) FROM TimeSlotUsage t WHERE "
+				+ "t.usageDate = :usageDate AND t.user.id = :userId") })
 @Table(name = "csf_time_slot_usage")
 public class TimeSlotUsage implements Serializable {
 

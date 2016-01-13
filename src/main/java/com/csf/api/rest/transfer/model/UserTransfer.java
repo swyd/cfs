@@ -1,5 +1,6 @@
 package com.csf.api.rest.transfer.model;
 
+import java.util.Date;
 import java.util.Map;
 
 public class UserTransfer {
@@ -10,9 +11,21 @@ public class UserTransfer {
 
 	private String name;
 
+	private String surname;
+	
+	private String username;
+
 	private String password;
 
+	private Integer sessionsLeft;
+
+	private Boolean isActive;
+
 	private Boolean isAdmin;
+
+	private Date datePaid;
+
+	private Date dateExpiring;
 
 	private Map<String, Boolean> roles;
 
@@ -20,18 +33,25 @@ public class UserTransfer {
 
 	}
 
-	public UserTransfer(String email, Integer id, String name, Map<String, Boolean> roles) {
+	public UserTransfer(Integer id,  String email, String name, String surname, String username, Integer sessionsLeft, Boolean isActive, Date datePaid, Date dateExpiring,
+			 Map<String, Boolean> roles) {
 		this.id = id;
 		this.email = email;
 		this.name = name;
+		this.surname = surname;
+		this.username = username;
+		this.sessionsLeft = sessionsLeft;
+		this.isActive = isActive;
+		this.dateExpiring = dateExpiring;
+		this.datePaid = datePaid;
 		this.roles = roles;
-		
-		if(roles.containsKey("ROLE_ADMIN")){
+
+		if (roles.containsKey("ROLE_ADMIN")) {
 			this.isAdmin = true;
-		}else{
+		} else {
 			this.isAdmin = false;
 		}
-			
+
 	}
 
 	public Integer getId() {
@@ -58,8 +78,12 @@ public class UserTransfer {
 		this.name = name;
 	}
 
-	public Map<String, Boolean> getRoles() {
-		return roles;
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
 	}
 
 	public String getPassword() {
@@ -70,12 +94,60 @@ public class UserTransfer {
 		this.password = password;
 	}
 
+	public Integer getSessionsLeft() {
+		return sessionsLeft;
+	}
+
+	public void setSessionsLeft(Integer sessionsLeft) {
+		this.sessionsLeft = sessionsLeft;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
 	public Boolean getIsAdmin() {
 		return isAdmin;
 	}
 
 	public void setIsAdmin(Boolean isAdmin) {
 		this.isAdmin = isAdmin;
+	}
+
+	public Date getDatePaid() {
+		return datePaid;
+	}
+
+	public void setDatePaid(Date datePaid) {
+		this.datePaid = datePaid;
+	}
+
+	public Date getDateExpiring() {
+		return dateExpiring;
+	}
+
+	public void setDateExpiring(Date dateExpiring) {
+		this.dateExpiring = dateExpiring;
+	}
+
+	public Map<String, Boolean> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Map<String, Boolean> roles) {
+		this.roles = roles;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 }

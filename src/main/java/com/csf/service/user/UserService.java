@@ -13,8 +13,6 @@ public interface UserService {
 
 	User find(Integer id);
 
-	User save(User user);
-
 	void delete(Integer id);
 
 	User findUserByUsername(String email);
@@ -24,5 +22,9 @@ public interface UserService {
 	User changePassword(User user, String password);
 
 	User update(UserTransfer userTransfer, User user);
+
+	User save(User user, Boolean encode);
+
+	User save(UserTransfer userTransfer);
 
 }

@@ -69,7 +69,7 @@
 		function editUser(user) {
 			var deferred = $q.defer();
 
-			$http.put('/rest/user/' + user.id + '', user)
+			$http.put('/rest/user', user)
 			.success(function(data){
 				deferred.resolve(data);
 			})

@@ -7,7 +7,7 @@ ng-hide {
 }
 
 .buttons-container {
-	padding-top: 30px;
+/* 	padding-top: 30px; */
 	padding-bottom: 30px;
 	margin: 0 auto;
 	text-align: center;
@@ -30,8 +30,36 @@ ng-hide {
 	width: 120px;
 	height: 90px;
 	padding: 18px 28px;
-	font-size: 42px; // change this to your desired size line-height :
-	normal;
+	font-size: 42px;
+	line-height : normal;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+.btn-custom-large {
+	border-color: #83BC4A;
+	background-color: black;
+	color: #83BC4A;
+/* 	width: 120px; */
+	height: 40px;
+/* 	padding: 18px 28px; */
+	font-size: 22px; 
+	line-height : normal;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+.btn-custom-large-active{
+	border-color: black;
+	background-color: #83BC4A;
+	color: black;
+/* 	width: 120px; */
+	height: 40px;
+/* 	padding: 18px 28px; */
+	font-size: 22px; 
+	line-height : normal;
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px;

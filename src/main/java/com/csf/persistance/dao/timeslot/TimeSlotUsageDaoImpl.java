@@ -28,10 +28,23 @@ public class TimeSlotUsageDaoImpl extends JpaDao<TimeSlotUsage, Integer> impleme
 	@Override
 	public List<TimeSlotUsage> findAllForDate(Date date) {
 		List<TimeSlotUsage> timeSlotUsage = this.getEntityManager()
-				.createNamedQuery("TimeSlotUsage.findAllForDate", TimeSlotUsage.class).setParameter("usageDate", date, TemporalType.DATE)
-				.getResultList();
+				.createNamedQuery("TimeSlotUsage.findAllForDate", TimeSlotUsage.class)
+				.setParameter("usageDate", date, TemporalType.DATE).getResultList();
 
 		return timeSlotUsage;
+	}
+
+	@Override
+	public Boolean checkIfExistsUsageForDate(Integer userId, Date date) {
+		Long exists = this.getEntityManager().createNamedQuery("TimeSlotUsage.checkIfExistsForDate", Long.class)
+				.setParameter("usageDate", date, TemporalType.DATE).setParameter("userId", userId).getSingleResult();
+//		TimeSlotUsage usage = this.getEntityManager().createNamedQuery("TimeSlotUsage.checkIfExistsForDate", TimeSlotUsage.class)
+//				.setParameter("usageDate", date, TemporalType.DATE).setParameter("userId", userId).getSingleResult();
+		if (exists > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

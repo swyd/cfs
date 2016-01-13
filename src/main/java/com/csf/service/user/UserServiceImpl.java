@@ -32,8 +32,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User save(User user) {
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+	public User save(User user, Boolean encode) {
+		if (encode) {
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
+		}
 		return userDao.save(user);
 	}
 
@@ -61,8 +63,46 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User update(UserTransfer userTransfer, User user) {
-		//TODO implement
+		if (userTransfer.getUsername() != null) {
+			user.setUsername(userTransfer.getUsername());
+		}
+		if (userTransfer.getIsActive() != null) {
+			user.setIsActive(userTransfer.getIsActive());
+		}
+		if (userTransfer.getName() != null) {
+			user.setName(userTransfer.getName());
+		}
+		if (userTransfer.getSurname() != null) {
+			user.setSurname(userTransfer.getSurname());
+		}
+		if (userTransfer.getIsAdmin() != null) {
+			user.setIsAdmin(userTransfer.getIsAdmin());
+		}
+		if (userTransfer.getDatePaid() != null) {
+			user.setDatePaid(userTransfer.getDatePaid());
+		}
+		if (userTransfer.getDateExpiring() != null) {
+			user.setDateExpiring(userTransfer.getDateExpiring());
+		}
+		if (userTransfer.getPassword() != null) {
+			user.setPassword(passwordEncoder.encode(userTransfer.getPassword()));
+		}
+		if (userTransfer.getEmail() != null) {
+			user.setEmail(userTransfer.getEmail());
+		}
+		if (userTransfer.getSessionsLeft() != null) {
+			user.setSessionsLeft(userTransfer.getSessionsLeft());
+		}
+		user.setId(userTransfer.getId());
 		return userDao.save(user);
+	}
+
+	@Override
+	public User save(UserTransfer userTransfer) {
+		User user = new User();
+		user.setPassword(userTransfer.getPassword());
+
+		return null;
 	}
 
 }

@@ -10,12 +10,47 @@
 								class="form-control" name="username" ng-model="vm.user.username">
 						</div>
 						<div class="form-group">
-							<label>Password:</label> <input type="text" class="form-control"
-								name="password" ng-model="vm.user.password">
+							<label>Password:</label> <input type="password"
+								class="form-control" name="password" ng-model="vm.user.password">
 						</div>
 						<div class="form-group">
-							<label>Ime i prezime:</label> <input type="text"
-								class="form-control" name="name" ng-model="vm.user.name">
+							<label>Ime:</label> <input type="text" class="form-control"
+								name="name" ng-model="vm.user.name">
+						</div>
+						<div class="form-group">
+							<label>Prezime:</label> <input type="text" class="form-control"
+								name="surname" ng-model="vm.user.surname">
+						</div>
+						<div class="form-group">
+							<label>Email:</label> <input type="email" class="form-control"
+								name="name" ng-model="vm.user.email">
+						</div>
+						<div class="form-group">
+							<label>Broj treninga:</label> <input type="text"
+								class="form-control" name="name" ng-model="vm.user.sessionsLeft">
+						</div>
+						<div class="form-group">
+							<label>Da li je aktivan: <input type="checkbox" value=""
+								class="form-control" name="isAdmin" ng-model="vm.user.isActive"
+								ng-checked="vm.user.isActive">
+							</label>
+						</div>
+						<div class="form-group">
+							<div class='input-group date' id='datetimepicker-paid'>
+								<input type='text' class="form-control"
+									ng-model="vm.user.datePaid" /> <span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class='input-group date' id='datetimepicker-expiring'>
+								<input type='text' class="form-control"
+									ng-model="vm.user.dateExpiring" /> <span
+									class="input-group-addon"> <span
+									class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
 						</div>
 						<div class="form-group">
 							<label>Da li je admin: <input type="checkbox" value=""
@@ -33,30 +68,54 @@
 						<div class="col-xs-12">
 							<table ng-table="vm.users" class="table" show-filter="true">
 								<tr ng-repeat="user in $data">
-									<td title="'Broj ugovora'" filter="{ id: 'number'}"
-										sortable="'id'">{{user.id}}</td>
-									<td title="'Ime i prezime'" filter="{ name: 'text'}"
-										sortable="'name'">{{user.name}}</td>
-									<td title="'Da li je Admin'" filter="{ isAdmin: 'text'}"
+									<td title="'Ime'" filter="{ name: 'text'}" sortable="'id'">{{user.name}}</td>
+									<td title="'Prezime'" filter="{ surname: 'text'}"
+										sortable="'surname'">{{user.surname}}</td>
+									<td title="'Username'" filter="{ username : 'text'}"
+										sortable="'username'">{{user.username}}</td>
+									<td title="'Email'" filter="{ email: 'text'}"
+										sortable="'email'">{{user.email}}</td>
+									<td title="'Broj treninga'" filter="{ sessionsLeft: 'number'}"
+										sortable="'sessionsLeft'">{{user.sessionsLeft}}</td>
+									<td title="'Aktivan'" filter="{ isActive: 'text'}"
+										sortable="'isActive'">{{user.isActive}}</td>
+									<td title="'Admin'" filter="{ isAdmin: 'text'}"
 										sortable="'isAdmin'">{{user.isAdmin}}</td>
-									<td title="'Promeni rolu'">
-										<button type="button" class="btn btn-warning"
-											ng-click="vm.changeRole(user.id)">Izvrsi</button>
-									</td>
-									<td title="'Izmeni Usera'">
+									<td title="'Datum uplate'" filter="{ datePaid: 'text'}"
+										sortable="'datePaid'">{{user.datePaid}}</td>
+									<td title="'Datum isteka'" filter="{ dateExpiring: 'text'}"
+										sortable="'dateExpiring'">{{user.dateExpiring}}</td>
+									<td title="''">
 										<button type="button" class="btn btn-primary"
-											ng-click="vm.editUser(user)">Izmeni</button>
+											ng-click="vm.editUser(user)">Edit</button>
 									</td>
-									<td title="'Obrisi'">
+									<td title="''">
 										<button type="button" class="btn btn-danger"
-											ng-confirm-click="Da li ste sigurni da zelite da obrisete ?"
-											confirmed-click="vm.deleteUser(user.id)">Obrisi</button>
+											ng-confirm-click="Da li ste sigurni da zelite da obrisete korisnika ?"
+											confirmed-click="vm.deleteUser(user.id)">Del</button>
 									</td>
 								</tr>
 							</table>
 						</div>
 					</div>
-
+					<script type="text/javascript">
+						$(function() {
+							$('#datetimepicker-paid').datetimepicker({
+								format : 'DD-MM-YYYY'
+							}).on('changeDate', function(e) {
+								vm.uuser.datePaid = e.date;
+							});
+						});
+					</script>
+					<script type="text/javascript">
+						$(function() {
+							$('#datetimepicker-expiring').datetimepicker({
+								format : 'DD-MM-YYYY'
+							}).on('changeDate', function(e) {
+								vm.user.dateExpiring = e.date;
+							});
+						});
+					</script>
 
 				</div>
 			</div>

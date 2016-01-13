@@ -6,7 +6,8 @@
 			findAll: findAll,
 			findAllWithRemaining: findAllWithRemaining,
 			findAllTimeSlotUsage: findAllTimeSlotUsage,
-			createAppointment: createAppointment
+			createAppointment: createAppointment,
+			cancelAppointment: cancelAppointment
 			
 		}
 		
@@ -24,10 +25,12 @@
 			return deferred.promise;
 		}
 		
-		function findAllWithRemaining(){
+		function findAllWithRemaining(query){
 			var deferred = $q.defer();
 
-			$http.get('/rest/timeslot/all/remaining')
+			$http.get('/rest/timeslot/all/remaining', {
+				params: query
+			})
 			.success(function(data){
 				deferred.resolve(data);
 			})
@@ -38,10 +41,12 @@
 			return deferred.promise;
 		}
 		
-		function findAllTimeSlotUsage(){
+		function findAllTimeSlotUsage(query){
 			var deferred = $q.defer();
 
-			$http.get('/rest/timeslot/usage/all')
+			$http.get('/rest/timeslot/usage/all', {
+				params: query
+			})
 			.success(function(data){
 				deferred.resolve(data);
 			})
@@ -52,10 +57,10 @@
 			return deferred.promise;
 		}
 		
-		function createAppointment(timeSlotId){
+		function createAppointment(timeSlotId, isTommorow){
 			var deferred = $q.defer();
 
-			$http.post('/rest/timeslot/usage/'+timeSlotId+'')
+			$http.post('/rest/timeslot/usage/'+timeSlotId+'/'+isTommorow)
 			.success(function(data){
 				deferred.resolve(data);
 			})
@@ -66,6 +71,19 @@
 			return deferred.promise;
 		}
 
+		function cancelAppointment(usageId){
+			var deferred = $q.defer();
+
+			$http.delete('/rest/timeslot/usage/'+usageId+'')
+			.success(function(data){
+				deferred.resolve(data);
+			})
+			.catch(function(err) {
+				deferred.reject(err);
+			}); 	
+
+			return deferred.promise;
+		}
 
 	});
 

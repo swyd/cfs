@@ -168,5 +168,21 @@ public class User implements Serializable, UserDetails {
 		this.username = username;
 	}
 
+	public Date getDatePaid() {
+		return datePaid;
+	}
+
+	public void setDatePaid(Date datePaid) {
+		this.datePaid = datePaid;
+	}
+
+	public Date getDateExpiring() {
+		return dateExpiring;
+	}
+
+	public void setDateExpiring(Date dateExpiring) {
+		this.dateExpiring = dateExpiring;
+	}
+
 	
 }

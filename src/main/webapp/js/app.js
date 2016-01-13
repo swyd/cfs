@@ -77,10 +77,7 @@ angular
 											'request' : function(config) {
 												var isRestCall = config.url
 														.indexOf('rest') !== -1;
-												console.log(config.url.indexOf('login'));
-												console.log(config.url.indexOf('login') == -1)
-												var isLoginCall = config.url.indexOf('login')== -1;
-//												config.headers['X-Auth-Token'] = null;
+
 												if (isRestCall
 														&& angular
 																.isDefined($rootScope.authToken)) {

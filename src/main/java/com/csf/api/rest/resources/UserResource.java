@@ -68,18 +68,15 @@ public class UserResource {
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
-	public UserTransfer createUser(@RequestBody UserTransfer userTransfer) {
-		User user = new User();
-		user.setName(userTransfer.getName());
-		user.setEmail(userTransfer.getEmail());
-		user.setPassword(userTransfer.getPassword());
+	public UserTransfer createUser(@RequestBody User userTransfer) {
 		if (userTransfer.getIsAdmin() == null) {
 			userTransfer.setIsAdmin(false);
-		}else{
-			user.setIsAdmin(userTransfer.getIsAdmin());
 		}
-
-		User savedUser = userService.save(user);
+		if (userTransfer.getIsActive() == null) {
+			userTransfer.setIsActive(false);
+		}
+		
+		User savedUser = userService.save(userTransfer, true);
 
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 
@@ -93,7 +90,7 @@ public class UserResource {
 			throw new RestException("User with given ID not found");
 		}
 		user.setIsAdmin(!user.getIsAdmin());
-		User savedUser = userService.save(user);
+		User savedUser = userService.save(user, false);
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 	}
 

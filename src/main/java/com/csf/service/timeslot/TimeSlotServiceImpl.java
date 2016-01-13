@@ -6,13 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.csf.api.rest.exception.RestException;
 import com.csf.api.rest.transfer.TransferConverterUtil;
 import com.csf.api.rest.transfer.model.TimeSlotTransfer;
 import com.csf.persistance.dao.timeslot.TimeSlotDao;
 import com.csf.persistance.dao.timeslot.TimeSlotUsageDao;
+import com.csf.persistance.dao.user.UserDao;
 import com.csf.persistence.entity.TimeSlot;
 import com.csf.persistence.entity.TimeSlotUsage;
 import com.csf.persistence.entity.User;
@@ -23,6 +26,9 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	@Autowired
 	private TimeSlotDao timeSlotDao;
 
+	@Autowired
+	private UserDao userDao;
+	
 	@Autowired
 	private TimeSlotUsageDao timeSlotUsageDao;
 
@@ -44,6 +50,11 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	@Override
 	public void delete(Integer id) {
 		timeSlotDao.delete(id);
+	}
+
+	@Override
+	public void deleteUsage(Integer id) {
+		timeSlotUsageDao.delete(id);
 	}
 
 	@Override
@@ -97,16 +108,41 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	}
 
 	@Override
-	public TimeSlotUsage create(User user, Integer timeSlotId) {
+	public TimeSlotUsage create(User user, Integer timeSlotId, Boolean isTommorow) {
+		DateTime date = (isTommorow) ? new DateTime().plusDays(1) : new DateTime();
+		
+		//Todo add training remaining logic
+		if(user.getSessionsLeft() == 0){
+			throw new RestException("You dont have anymore sessions left");
+		}
+		
+		if (timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), date.toDate())) {
+			throw new RestException("You already have a session sheduled for today");
+		}
+		
+		user.setSessionsLeft(user.getSessionsLeft()-1);
+		user = userDao.save(user);
+		
 		TimeSlotUsage timeSlotUsage = new TimeSlotUsage();
 		timeSlotUsage.setUser(user);
-
+		
 		TimeSlot timeSlot = new TimeSlot();
 		timeSlot.setId(timeSlotId);
 		timeSlotUsage.setTimeSlot(timeSlot);
+		timeSlotUsage.setUsageDate(date.toDate());
 		
-		timeSlotUsage.setUsageDate(new Date());
+		
 		
 		return timeSlotUsageDao.save(timeSlotUsage);
+	}
+
+	@Override
+	public List<TimeSlotUsage> findAllTimeSlotUsageForDate(Date date) {
+		return timeSlotUsageDao.findAllForDate(date);
+	}
+
+	@Override
+	public TimeSlotUsage findTimeSlotUsage(Integer timeSlotId) {
+		return timeSlotUsageDao.find(timeSlotId);
 	}
 }

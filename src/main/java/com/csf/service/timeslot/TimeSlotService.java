@@ -26,6 +26,12 @@ public interface TimeSlotService {
 
 	List<TimeSlotTransfer> findAllWithRemainingForDate(Date date);
 
-	TimeSlotUsage create(User user, Integer timeSlotId);
+	List<TimeSlotUsage> findAllTimeSlotUsageForDate(Date today);
+
+	TimeSlotUsage create(User user, Integer timeSlotId, Boolean isTommorow);
+
+	TimeSlotUsage findTimeSlotUsage(Integer timeSlotId);
+
+	void deleteUsage(Integer id);
 	
 }
