@@ -6,8 +6,12 @@
 		var vm = this;
 		vm.user = {}, vm.users = new NgTableParams({}, {
 			dataset : null
-		}), vm.editingInProgress = false;
-
+		});
+		vm.editingInProgress = false;
+		vm.date = {
+			startDate : null,
+			endDate : null
+		};
 		vm.createUser = createUser;
 		vm.changeRole = changeRole;
 		vm.editUser = editUser;
@@ -17,15 +21,18 @@
 		activate();
 
 		function activate() {
-			UsersService.getUsers().then(function(data) {
-				data.filter(function(el) {
-					el.datePaid = $filter('date')(el.datePaid, "dd-MM-yyyy");
-					el.dateExpiring = $filter('date')(el.dateExpiring, "dd-MM-yyyy");
-				});
-				vm.users = new NgTableParams({}, {
-					dataset : data
-				});
-			});
+			UsersService.getUsers().then(
+					function(data) {
+						data.filter(function(el) {
+							el.datePaid = $filter('date')(el.datePaid,
+									"dd-MM-yyyy");
+							el.dateExpiring = $filter('date')(el.dateExpiring,
+									"dd-MM-yyyy");
+						});
+						vm.users = new NgTableParams({}, {
+							dataset : data
+						});
+					});
 		}
 
 		function createUser() {
@@ -71,7 +78,7 @@
 
 		function editUser(user) {
 			vm.editingInProgress = true;
-			
+
 			vm.user.username = user.username;
 			vm.user.password = user.password;
 			vm.user.name = user.name;
@@ -80,16 +87,17 @@
 			vm.user.sessionsLeft = user.sessionsLeft;
 			vm.user.isAdmin = user.isAdmin;
 			vm.user.isActive = user.isActive;
-			vm.user.datePaid = user.datePaid;
-			vm.user.dateExpiring = user.dateExpiring;
+			vm.date.startDate = moment(Date.parse(user.datePaid)).format('DD-MM-YYYY');
+			vm.date.endDate = moment(Date.parse(user.dateExpiring).format('DD-MM-YYYY'));
 			vm.user.id = user.id;
 
 		}
 
 		function saveEditedUser() {
-			
-			vm.user.datePaid = moment(vm.user.datePaid).format('DD-MM-YYYY');
-			vm.user.dateExpiring = moment(vm.user.dateExpiring).format('DD-MM-YYYY');
+			console.log(vm.datePicker.date.endDate);
+			console.log(vm.datePicker.date.startDate);
+			vm.user.dateExpiring = vm.date.endDate;
+			vm.user.datePaid = vm.date.startDate;
 			UsersService.editUser(vm.user).then(function(data) {
 				vm.editingInProgress = false;
 

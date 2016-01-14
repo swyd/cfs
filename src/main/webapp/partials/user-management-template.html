@@ -36,21 +36,9 @@
 							</label>
 						</div>
 						<div class="form-group">
-							<div class='input-group date' id='datetimepicker-paid'>
-								<input type='text' class="form-control"
-									ng-model="vm.user.datePaid" /> <span class="input-group-addon">
-									<span class="glyphicon glyphicon-calendar"></span>
-								</span>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class='input-group date' id='datetimepicker-expiring'>
-								<input type='text' class="form-control"
-									ng-model="vm.user.dateExpiring" /> <span
-									class="input-group-addon"> <span
-									class="glyphicon glyphicon-calendar"></span>
-								</span>
-							</div>
+							<label>Izaberi datum pocetka i isteka clanarine:</label> <input date-range-picker
+									class="form-control date-picker" type="text"
+									ng-model="vm.date" />
 						</div>
 						<div class="form-group">
 							<label>Da li je admin: <input type="checkbox" value=""
@@ -98,24 +86,6 @@
 							</table>
 						</div>
 					</div>
-					<script type="text/javascript">
-						$(function() {
-							$('#datetimepicker-paid').datetimepicker({
-								format : 'DD-MM-YYYY'
-							}).on('changeDate', function(e) {
-								vm.uuser.datePaid = e.date;
-							});
-						});
-					</script>
-					<script type="text/javascript">
-						$(function() {
-							$('#datetimepicker-expiring').datetimepicker({
-								format : 'DD-MM-YYYY'
-							}).on('changeDate', function(e) {
-								vm.user.dateExpiring = e.date;
-							});
-						});
-					</script>
 
 				</div>
 			</div>

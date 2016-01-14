@@ -1,7 +1,7 @@
 angular
 		.module(
 				'csf',
-				[ 'ngRoute', 'ngCookies', 'ngMessages', 'csf.services',
+				[ 'ngRoute','ui.bootstrap', 'ngCookies', 'ngMessages', 'csf.services',
 						'daterangepicker', 'ngTable' ])
 		.config(
 				[
