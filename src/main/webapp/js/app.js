@@ -1,8 +1,8 @@
 angular
 		.module(
 				'csf',
-				[ 'ngRoute','ui.bootstrap', 'ngCookies', 'ngMessages', 'csf.services',
-						'daterangepicker', 'ngTable' ])
+				[ 'ngRoute', 'ui.bootstrap', 'ngCookies', 'ngMessages',
+						'csf.services', 'daterangepicker', 'ngTable' ])
 		.config(
 				[
 						'$routeProvider',
@@ -30,7 +30,20 @@ angular
 												controller : 'UsersController',
 												controllerAs : 'vm'
 											})
-									.otherwise({
+									.when(
+											'/training-management',
+											{
+												templateUrl : 'partials/training-management.html',
+												controller : 'TrainingController',
+												controllerAs : 'vm'
+											})
+									.when(
+											'/manage-account',
+											{
+												templateUrl : 'partials/user-management-single.html',
+												controller : 'SingleUserController',
+												controllerAs : 'vm'
+											}).otherwise({
 										templateUrl : 'partials/index.html',
 										controller : IndexController,
 										controllerAs : 'vm'
@@ -98,7 +111,8 @@ angular
 
 						} ]
 
-		).directive('ngConfirmClick', [ function() {
+		)
+		.directive('ngConfirmClick', [ function() {
 			return {
 				link : function(scope, element, attr) {
 					var msg = attr.ngConfirmClick || "Da li ste sigurni?";
@@ -110,59 +124,100 @@ angular
 					});
 				}
 			};
-		} ]).run(function($rootScope, $location, $cookieStore, UserService) {
+		} ]).directive(
+				'modal',
+				function() {
+					return {
+						template : '<div class="modal fade">'
+								+ '<div class="modal-dialog">'
+								+ '<div class="modal-content">'
+								+ '<div class="modal-header">'
+								+ '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>'
+								+ '<h4 class="modal-title">{{ title }}</h4>'
+								+ '</div>'
+								+ '<div class="modal-body" ng-transclude></div>'
+								+ '</div>' + '</div>' + '</div>',
+						restrict : 'E',
+						transclude : true,
+						replace : true,
+						scope : true,
+						link : function postLink(scope, element, attrs) {
+							scope.title = attrs.title;
 
-			/* Reset error when a new view is loaded */
-			$rootScope.$on('$viewContentLoaded', function() {
-				delete $rootScope.error;
-			});
+							scope.$watch(attrs.visible, function(value) {
+								if (value == true)
+									$(element).modal('show');
+								else
+									$(element).modal('hide');
+							});
 
-			$rootScope.hasRole = function(role) {
+//							$(element).on('shown.bs.modal', function() {
+//								scope.$apply(function() {
+//									scope.$parent[attrs.visible] = true;
+//								});
+//							});
 
-				if ($rootScope.user === undefined) {
-					return false;
-				}
+							$(element).on('hidden.bs.modal', function() {
+								scope.$apply(function() {
+									scope.$parent.vm.showModal = false
+								});
+							});
+						}
+					};
+				}).run(
+				function($rootScope, $location, $cookieStore, UserService) {
 
-				if ($rootScope.user.roles[role] === undefined) {
-					return false;
-				}
+					/* Reset error when a new view is loaded */
+					$rootScope.$on('$viewContentLoaded', function() {
+						delete $rootScope.error;
+					});
 
-				return $rootScope.user.roles[role];
-			};
+					$rootScope.hasRole = function(role) {
 
-			$rootScope.logout = function() {
-				delete $rootScope.user;
-				delete $rootScope.authToken;
-				$cookieStore.remove('authToken');
-				$location.path("/login");
-			};
+						if ($rootScope.user === undefined) {
+							return false;
+						}
 
-			/* Try getting valid user from cookie or go to login page */
-			var originalPath = $location.path();
-			$location.path("/login");
-			var authToken = $cookieStore.get('authToken');
-			if (authToken !== undefined) {
-				$rootScope.authToken = authToken;
-				UserService.get(function(user) {
-					$rootScope.user = user;
-					$location.path(originalPath);
+						if ($rootScope.user.roles[role] === undefined) {
+							return false;
+						}
+
+						return $rootScope.user.roles[role];
+					};
+
+					$rootScope.logout = function() {
+						delete $rootScope.user;
+						delete $rootScope.authToken;
+						$cookieStore.remove('authToken');
+						$location.path("/login");
+					};
+
+					/* Try getting valid user from cookie or go to login page */
+					var originalPath = $location.path();
+					$location.path("/login");
+					var authToken = $cookieStore.get('authToken');
+					if (authToken !== undefined) {
+						$rootScope.authToken = authToken;
+						UserService.get(function(user) {
+							$rootScope.user = user;
+							$location.path(originalPath);
+						});
+					}
+
+					$rootScope.initialized = true;
 				});
-			}
-
-			$rootScope.initialized = true;
-		});
 
 function IndexController($scope, $http, NewsService) {
 	var vm = this;
-//	vm.docs = [];
+	// vm.docs = [];
 
-//	$http.get('./downloads/').success(function(data) {
-//		$('a', data).each(function(index, el) {
-//			if (index > 0) {
-//				vm.docs.push($.trim($(el).text()));
-//			}
-//		});
-//	});
+	// $http.get('./downloads/').success(function(data) {
+	// $('a', data).each(function(index, el) {
+	// if (index > 0) {
+	// vm.docs.push($.trim($(el).text()));
+	// }
+	// });
+	// });
 };
 
 function EditController($scope, $routeParams, $location, NewsService) {

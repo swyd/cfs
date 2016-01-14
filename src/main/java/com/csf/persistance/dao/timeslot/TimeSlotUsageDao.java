@@ -13,5 +13,9 @@ public interface TimeSlotUsageDao extends GenericDao<TimeSlotUsage, Integer>{
 	List<TimeSlotUsage> findAllForDate(Date date);
 
 	Boolean checkIfExistsUsageForDate(Integer userId, Date date);
+
+	Long getSessionsRemainingForDateAndSlot(Integer timeSlotId, Date forDate);
+
+	List<TimeSlotUsage> findAllTimeSlotUsageFromTo(Date fromDate, Date toDate);
 	
 }

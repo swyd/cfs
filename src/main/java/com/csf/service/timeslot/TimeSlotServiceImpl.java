@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 	@Autowired
 	private UserDao userDao;
-	
+
 	@Autowired
 	private TimeSlotUsageDao timeSlotUsageDao;
 
@@ -73,9 +72,17 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	}
 
 	@Override
-	public List<TimeSlotTransfer> findAllWithRemainingForDate(Date date) {
-		List<TimeSlot> timeSlots = timeSlotDao.findAll();
+	public List<TimeSlotTransfer> findAllWithRemainingForDate(User user, Date date) {
+		List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		Map<String, Integer> remainingMap = new HashMap<String, Integer>();
+		Boolean isAdvanced = user.getIsAdvanced();
+		for (TimeSlot timeSlot : timeSlotDao.findAll()) {
+			if (isAdvanced && timeSlot.getIsAdvanced()) {
+				timeSlots.add(timeSlot);
+			} else if (!isAdvanced && !timeSlot.getIsAdvanced()) {
+				timeSlots.add(timeSlot);
+			}
+		}
 
 		for (TimeSlot timeSlot : timeSlots) {
 			remainingMap.put(timeSlot.getStartsAt(), timeSlot.getLimit());
@@ -90,49 +97,82 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			}
 		}
 
-		return convertToTimeSlotTransferWithRemaining(timeSlots, remainingMap);
+		return convertToTimeSlotTransferWithRemaining(timeSlots, remainingMap, isAdvanced);
 	}
 
 	private List<TimeSlotTransfer> convertToTimeSlotTransferWithRemaining(List<TimeSlot> timeSlots,
-			Map<String, Integer> remainingMap) {
+			Map<String, Integer> remainingMap, Boolean isAdvanced) {
 		List<TimeSlotTransfer> timeSlotTransfers = new ArrayList<TimeSlotTransfer>();
 
-		for (TimeSlot timeSlot : timeSlots) {
-			TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
-			timeSlotTransfer.setSlotsRemaining(remainingMap.get(timeSlot.getStartsAt()));
-			timeSlotTransfers.add(timeSlotTransfer);
+		if (isAdvanced) {
+			for (TimeSlot timeSlot : timeSlots) {
+				TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
+				timeSlotTransfer.setSlotsRemaining(remainingMap.get(timeSlot.getStartsAt()));
+				timeSlotTransfers.add(timeSlotTransfer);
+			}
+		} else {
+			Boolean openFive = checkIfAllAreBooked(remainingMap);
+			if (openFive) {
+				for (TimeSlot timeSlot : timeSlots) {
+					TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
+					timeSlotTransfer.setSlotsRemaining(remainingMap.get(timeSlot.getStartsAt()));
+					timeSlotTransfers.add(timeSlotTransfer);
+				}
+			} else {
+				for (TimeSlot timeSlot : timeSlots) {
+					if (!timeSlot.getStartsAt().equals("17")) {
+						TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
+						timeSlotTransfer.setSlotsRemaining(remainingMap.get(timeSlot.getStartsAt()));
+						timeSlotTransfers.add(timeSlotTransfer);
+					}
+				}
+			}
+
 		}
 
 		return timeSlotTransfers;
 
 	}
 
+	private Boolean checkIfAllAreBooked(Map<String, Integer> map) {
+		for (String key : map.keySet()) {
+			if (!key.equals("17")) {
+				if (map.get(key) > 0) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	@Override
-	public TimeSlotUsage create(User user, Integer timeSlotId, Boolean isTommorow) {
-		DateTime date = (isTommorow) ? new DateTime().plusDays(1) : new DateTime();
-		
-		//Todo add training remaining logic
-		if(user.getSessionsLeft() == 0){
-			throw new RestException("You dont have anymore sessions left");
+	public TimeSlotUsage create(User user, Integer timeSlotId, Date forDate) {
+		if (user.getSessionsLeft() == 0) {
+			throw new RestException("You dont have anymore trainings left");
+		}
+
+		if (timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
+			throw new RestException("You already have a training sheduled for today");
+		}
+
+		Long sessionsUsed = timeSlotUsageDao.getSessionsRemainingForDateAndSlot(timeSlotId, forDate);
+
+		if (sessionsUsed == 14) {
+			throw new RestException("No more slots available for this time.");
 		}
 		
-		if (timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), date.toDate())) {
-			throw new RestException("You already have a session sheduled for today");
-		}
-		
-		user.setSessionsLeft(user.getSessionsLeft()-1);
+		user.setSessionsLeft(user.getSessionsLeft() - 1);
 		user = userDao.save(user);
-		
+
 		TimeSlotUsage timeSlotUsage = new TimeSlotUsage();
 		timeSlotUsage.setUser(user);
-		
+
 		TimeSlot timeSlot = new TimeSlot();
 		timeSlot.setId(timeSlotId);
 		timeSlotUsage.setTimeSlot(timeSlot);
-		timeSlotUsage.setUsageDate(date.toDate());
-		
-		
-		
+		timeSlotUsage.setUsageDate(forDate);
+
 		return timeSlotUsageDao.save(timeSlotUsage);
 	}
 
@@ -144,5 +184,10 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	@Override
 	public TimeSlotUsage findTimeSlotUsage(Integer timeSlotId) {
 		return timeSlotUsageDao.find(timeSlotId);
+	}
+
+	@Override
+	public List<TimeSlotUsage> findAllTimeSlotUsageFromTo(Date fromDate, Date toDate) {
+		return timeSlotUsageDao.findAllTimeSlotUsageFromTo(fromDate, toDate);
 	}
 }

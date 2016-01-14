@@ -1,0 +1,51 @@
+<div class="panel panel-default" ng-if="$root.user.roles.ROLE_ADMIN">
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-xs-12">
+				<h1 align="center">Treninzi u odabranom periodu</h1>
+				<div>
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label>Izaberi datume:</label> <input date-range-picker
+								class="form-control date-picker" type="text"
+								ng-model="vm.datePicker.date" />
+						</div>
+						<a><button type="button" class="btn btn-custom-large pull-right"
+							ng-click="vm.searchTrainings()">Pretrazi</button></a>
+
+						<br /> <br /> <br />
+
+						<div class="col-xs-12">
+							<!-- 							<h3>Odaberi kolone</h3> -->
+							<!-- 							<div style="margin-bottom: 20px"> -->
+							<!-- 								<label class="checkbox-inline" ng-repeat="col in user.cols"> -->
+							<!-- 									<input type="checkbox" ng-if="col.title" -->
+							<!-- 									ng-model-options="{ getterSetter: true }" ng-model="col.show" /> -->
+							<!-- 									{{col.title()}} -->
+							<!-- 								</label> -->
+							<!-- 							</div> -->
+							<table ng-table="vm.trainings" class="table" show-filter="true"
+								ng-table-columns-binding="user.cols">
+								<tr ng-repeat="training in $data">
+									<td title="'Name'" filter="{ name: 'text'}" sortable="'name'">{{training.name}}</td>
+									<td title="'Surname'" filter="{ surname: 'text'}"
+										sortable="'surname'">{{training.surname}}</td>
+									<td title="'Training Starts At'" filter="{startsAt: 'text'}"
+										sortable="'startsAt'">{{training.startsAt}}h</td>
+									<td title="'Date'" filter="{ date: 'text'}" sortable="'date'">{{training.usageDate}}</td>
+
+									<td ng-if="$root.user.roles.ROLE_ADMIN" title="'Obrisi'">
+										<button type="button" class="btn btn-danger"
+											ng-confirm-click="Are you sure you want to cancel your appointment ?"
+											confirmed-click="vm.deleteTrainings(training.id)">Obrisi</button>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

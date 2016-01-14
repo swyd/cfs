@@ -10,10 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-//@NamedQueries({
-//	@NamedQuery(name = "ContractUsage.findAll", query = "SELECT c FROM ContractUsage c WHERE "
-//			+ "c.date >= :fromDate AND c.date <= :toDate")
-//	})
+// @NamedQueries({
+// @NamedQuery(name = "ContractUsage.findAll", query = "SELECT c FROM
+// ContractUsage c WHERE "
+// + "c.date >= :fromDate AND c.date <= :toDate")
+// })
 @Table(name = "csf_time_slot")
 public class TimeSlot implements Serializable {
 
@@ -31,7 +32,10 @@ public class TimeSlot implements Serializable {
 	private String startsAt;
 
 	private Integer limit;
-	
+
+	@Column(name = "isadvanced")
+	private Boolean isAdvanced;
+
 	public Integer getId() {
 		return id;
 	}
@@ -54,6 +58,14 @@ public class TimeSlot implements Serializable {
 
 	public void setLimit(Integer limit) {
 		this.limit = limit;
+	}
+
+	public Boolean getIsAdvanced() {
+		return isAdvanced;
+	}
+
+	public void setIsAdvanced(Boolean isAdvanced) {
+		this.isAdvanced = isAdvanced;
 	}
 
 }

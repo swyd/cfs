@@ -19,8 +19,13 @@ import javax.persistence.Table;
 @NamedQueries({
 		@NamedQuery(name = "TimeSlotUsage.findAllForDate", query = "SELECT t FROM TimeSlotUsage t WHERE "
 				+ "t.usageDate = :usageDate"),
+		@NamedQuery(name = "TimeSlotUsage.getSessionsRemainingForDateAndSlot", query = "SELECT COUNT(t) FROM TimeSlotUsage t WHERE "
+				+ "t.usageDate = :forDate AND t.timeSlot.id = :timeSlotId"),
+		@NamedQuery(name = "TimeSlotUsage.findAllUsageFromTo", query = "SELECT t FROM TimeSlotUsage t WHERE "
+				+ "t.usageDate >= :fromDate AND t.usageDate <= :toDate"),
 		@NamedQuery(name = "TimeSlotUsage.checkIfExistsForDate", query = "SELECT COUNT(t) FROM TimeSlotUsage t WHERE "
 				+ "t.usageDate = :usageDate AND t.user.id = :userId") })
+
 @Table(name = "csf_time_slot_usage")
 public class TimeSlotUsage implements Serializable {
 

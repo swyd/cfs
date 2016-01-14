@@ -38,13 +38,28 @@ public class TimeSlotUsageDaoImpl extends JpaDao<TimeSlotUsage, Integer> impleme
 	public Boolean checkIfExistsUsageForDate(Integer userId, Date date) {
 		Long exists = this.getEntityManager().createNamedQuery("TimeSlotUsage.checkIfExistsForDate", Long.class)
 				.setParameter("usageDate", date, TemporalType.DATE).setParameter("userId", userId).getSingleResult();
-//		TimeSlotUsage usage = this.getEntityManager().createNamedQuery("TimeSlotUsage.checkIfExistsForDate", TimeSlotUsage.class)
-//				.setParameter("usageDate", date, TemporalType.DATE).setParameter("userId", userId).getSingleResult();
 		if (exists > 0) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public Long getSessionsRemainingForDateAndSlot(Integer timeSlotId, Date forDate) {
+		Long remaining = this.getEntityManager().createNamedQuery("TimeSlotUsage.getSessionsRemainingForDateAndSlot", Long.class)
+				.setParameter("forDate", forDate, TemporalType.DATE).setParameter("timeSlotId", timeSlotId).getSingleResult();
+		
+		return remaining;
+	}
+
+	@Override
+	public List<TimeSlotUsage> findAllTimeSlotUsageFromTo(Date fromDate, Date toDate) {
+		List<TimeSlotUsage> timeSlotUsage = this.getEntityManager()
+				.createNamedQuery("TimeSlotUsage.findAllUsageFromTo", TimeSlotUsage.class)
+				.setParameter("fromDate", fromDate, TemporalType.DATE).setParameter("toDate", toDate, TemporalType.DATE).getResultList();
+
+		return timeSlotUsage;
 	}
 
 }

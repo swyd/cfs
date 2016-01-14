@@ -36,9 +36,9 @@
 							</label>
 						</div>
 						<div class="form-group">
-							<label>Izaberi datum pocetka i isteka clanarine:</label> <input date-range-picker
-									class="form-control date-picker" type="text"
-									ng-model="vm.date" />
+							<label>Izaberi datum pocetka i isteka clanarine:</label> <input
+								date-range-picker class="form-control date-picker" type="text"
+								ng-model="vm.date" />
 						</div>
 						<div class="form-group">
 							<label>Da li je admin: <input type="checkbox" value=""
@@ -54,7 +54,15 @@
 						<br /> <br /> <br />
 
 						<div class="col-xs-12">
-							<table ng-table="vm.users" class="table" show-filter="true">
+							<h3>Odaberi kolone</h3>
+							<div style="margin-bottom: 20px">
+								<label class="checkbox-inline" ng-repeat="col in user.cols">
+									<input type="checkbox" ng-if="col.title"
+									ng-model-options="{ getterSetter: true }" ng-model="col.show" />
+									{{col.title()}}
+								</label>
+							</div>
+							<table ng-table="vm.users" class="table" show-filter="true" ng-table-columns-binding="user.cols">
 								<tr ng-repeat="user in $data">
 									<td title="'Ime'" filter="{ name: 'text'}" sortable="'id'">{{user.name}}</td>
 									<td title="'Prezime'" filter="{ surname: 'text'}"
@@ -73,11 +81,11 @@
 										sortable="'datePaid'">{{user.datePaid}}</td>
 									<td title="'Datum isteka'" filter="{ dateExpiring: 'text'}"
 										sortable="'dateExpiring'">{{user.dateExpiring}}</td>
-									<td title="''">
+									<td title="'Edit'">
 										<button type="button" class="btn btn-primary"
 											ng-click="vm.editUser(user)">Edit</button>
 									</td>
-									<td title="''">
+									<td title="'Delete'">
 										<button type="button" class="btn btn-danger"
 											ng-confirm-click="Da li ste sigurni da zelite da obrisete korisnika ?"
 											confirmed-click="vm.deleteUser(user.id)">Del</button>

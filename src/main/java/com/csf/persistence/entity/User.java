@@ -58,6 +58,9 @@ public class User implements Serializable, UserDetails {
 	@Column(name = "username", unique = true, length = 16, nullable = false)
 	private String username;
 
+	@Column(name = "isadvanced")
+	private Boolean isAdvanced;
+	
 	public User() {
 		/* Reflection instantiation */
 	}
@@ -182,6 +185,14 @@ public class User implements Serializable, UserDetails {
 
 	public void setDateExpiring(Date dateExpiring) {
 		this.dateExpiring = dateExpiring;
+	}
+
+	public Boolean getIsAdvanced() {
+		return isAdvanced;
+	}
+
+	public void setIsAdvanced(Boolean isAdvanced) {
+		this.isAdvanced = isAdvanced;
 	}
 
 	

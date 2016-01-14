@@ -57,10 +57,9 @@
 			return deferred.promise;
 		}
 		
-		function createAppointment(timeSlotId, isTommorow){
+		function createAppointment(timeSlotId, date){
 			var deferred = $q.defer();
-
-			$http.post('/rest/timeslot/usage/'+timeSlotId+'/'+isTommorow)
+			$http.post('/rest/timeslot/usage/'+timeSlotId+'/'+date+'')
 			.success(function(data){
 				deferred.resolve(data);
 			})

@@ -5,89 +5,86 @@
 	function controller($scope, $http, $q, TimeSlotsService, $filter,
 			NgTableParams) {
 		var vm = this;
-		vm.date = moment().format('MM/DD/YYYY');
-		vm.today = moment().format('MM/DD/YYYY');
-		vm.tommorow = moment().add('days', 1).format('MM/DD/YYYY');
-		vm.isTommorow = false;
+		vm.date = moment().format('DD-MM-YYYY');
 		vm.timeSlots = [];
+		vm.trainingDates = {
+			trainingDates : []
+		};
 		vm.timeSlotsWithRemaining = {};
 		vm.appointment = {};
-		vm.appointments = new NgTableParams({		       
-		    }, {
+		vm.appointments = new NgTableParams({}, {
 			dataset : null
 		})
 
-		vm.findAll = findAll;
 		vm.createAppointment = createAppointment;
-		vm.findAllWithRemaining = findAllWithRemaining;
-		vm.findAllTimeSlotUsage = findAllTimeSlotUsage;
+		vm.findAllTimeSlotUsageForDate = findAllTimeSlotUsageForDate;
+		vm.findAllWithRemainingForDate = findAllWithRemainingForDate;
 		vm.cancelAppointment = cancelAppointment;
-		vm.renderToday = renderToday;
-		vm.renderTommorow = renderTommorow;
+		vm.render = render;
 		vm.setDate = setDate;
+		vm.getAvailableDates = getAvailableDates;
 
-		renderToday()
+		render(vm.date);
 
-		function setDate(date){
-			vm.date = date;
-		}
-		
-		function renderToday() {
-			vm.isTommorow = false;
-			//console.log(moment().format('MM/DD/YYYY'));
-			// TODO add active switch
-			findAllTimeSlotUsage(false);
-			findAllWithRemaining(false);
+		function setDate(date) {
+			vm.date = moment(date, "DD-MM-YYYY").format("DD-MM-YYYY");
 		}
 
-		function renderTommorow() {
-			vm.isTommorow = true;
-			// TODO add active switch
-			findAllTimeSlotUsage(true);
-			findAllWithRemaining(true);
+		function getAvailableDates() {
+			vm.trainingDates.trainingDates = [];
+			var now = new Date();
+			if (now.getHours() >= 15 && now.getHours() < 24) {
+				// just tommorow enabled
+				vm.trainingDates.trainingDates.push({
+					"startsAt" : moment().format("DD-MM-YYYY")
+				});
+				vm.trainingDates.trainingDates.push({
+					"startsAt" : moment().add(1, 'days').format("DD-MM-YYYY")
+				});
+			} else {
+				// today and tommorow
+				vm.trainingDates.trainingDates.push({
+					"startsAt" : moment().format("DD-MM-YYYY")
+				});
+				vm.trainingDates.trainingDates.push({
+					"startsAt" : moment().add(1, 'days').format("DD-MM-YYYY")
+				});
+				return vm.trainingDates;
+			}
 		}
 
-		function findAll() {
-			TimeSlotsService.findAll().then(function(data) {
-				// timeslots = [];
-				// for(var timeslot in data){
-				// timeslots.push(timeslot.startsAt);
-				// }
-				// vm.timeSlots = data;
-			});
+		function render(date) {
+			console.log("Render for: " + date);
+			getAvailableDates();
+			findAllTimeSlotUsageForDate(date);
+			findAllWithRemainingForDate(date);
 		}
 
 		function cancelAppointment(appointmentId) {
 			TimeSlotsService.cancelAppointment(appointmentId).then(function() {
-				refresh();
+				render(vm.date);
 			});
 		}
 
 		function createAppointment(timeSlotId) {
-			TimeSlotsService.createAppointment(timeSlotId, vm.isTommorow).then(function() {
-				refresh();
-			});
+			console.log("Create appointment for: " + vm.date);
+			TimeSlotsService.createAppointment(timeSlotId, vm.date).then(
+					function() {
+						render(vm.date);
+					});
 		}
 
-		function refresh() {
-			if (vm.isTommorow) {
-				renderTommorow();
-			} else {
-				renderToday();
-			}
-		}
-
-		function findAllWithRemaining(ist) {
+		function findAllWithRemainingForDate(date) {
 			TimeSlotsService.findAllWithRemaining({
-				isTommorow : ist
+				forDate : date
 			}).then(function(data) {
 				vm.timeSlotsWithRemaining = data;
 			});
 		}
 
-		function findAllTimeSlotUsage(ist) {
+		function findAllTimeSlotUsageForDate(date) {
 			TimeSlotsService.findAllTimeSlotUsage({
-				isTommorow : ist
+				forDate : date
 			}).then(function(data) {
 				data.filter(function(el) {
 					el.usageDate = $filter('date')(el.usageDate, "dd/MM/yyyy");
@@ -100,7 +97,7 @@
 					vm.timeSlots.push(data[i].startsAt);
 				}
 				vm.appointments = new NgTableParams({
-//					filter: { name: firstName}
+				// filter: { name: firstName}
 				}, {
 					dataset : data
 				});

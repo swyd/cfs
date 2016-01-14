@@ -5,25 +5,23 @@
 			<div class="panel-body">
 
 				<h1 align="center">Prijave {{vm.date}}</h1>
-				<h3 align="center">
-						Za dan:
+				<h3 align="center" >
+					Za dan:
+					<button ng-repeat="var in vm.trainingDates.trainingDates" id="buttonToday" type="button" class="btn btn-custom-large"
+						ng-click="vm.render(var.startsAt); vm.setDate(var.startsAt)">Prijave
+						{{var.startsAt}}</button>
 
-						<button id="buttonToday" type="button" class="btn btn-custom-large"
-							ng-disabled="timeSlot.slotsRemaining == 0"
-							ng-click="vm.renderToday(); vm.setDate(vm.today)">Prijave {{vm.today}}</button>
-
-						<button id="buttonTommorow" type="button" class="btn btn-custom-large "
-							ng-disabled="timeSlot.slotsRemaining == 0"
-							ng-click="vm.renderTommorow(); vm.setDate(vm.tommorow)">Prijave {{vm.tommorow}}</button>
-					</h3>
-					</br>
+					<!-- 						<button id="buttonTommorow" type="button" class="btn btn-custom-large " -->
+					<!-- 							ng-disabled="timeSlot.slotsRemaining == 0" -->
+					<!-- 							ng-click="vm.renderTommorow(); vm.setDate(vm.tommorow)">Prijave {{vm.tommorow}}</button> -->
+				</h3>
+				</br>
 				<div class="buttons-container">
-					
+
 					<div class="button-container"
 						ng-repeat="timeSlot in vm.timeSlotsWithRemaining">
-						<label>Termin {{timeSlot.startsAt}}h</label> </br>
-						<label>Ostalo jos:</label>
-						 </br>
+						<label>Termin {{timeSlot.startsAt}}h</label> </br> <label>Ostalo
+							jos:</label> </br>
 						<button type="button" class="btn btn-xlarge"
 							ng-disabled="timeSlot.slotsRemaining == 0"
 							ng-click="vm.createAppointment(timeSlot.id)">{{timeSlot.slotsRemaining}}</button>
@@ -39,7 +37,7 @@
 							<td title="'Surname'" filter="{ surname: 'text'}"
 								sortable="'surname'">{{appointment.surname}}</td>
 							<td title="'Training Starts At'" filter="{startsAt: 'text'}"
-								filter-data="vm.timeSlots" sortable="'startsAt'">{{appointment.startsAt}}h</td>
+								sortable="'startsAt'">{{appointment.startsAt}}h</td>
 							<td title="'Date'" filter="{ date: 'text'}" sortable="'date'">{{appointment.usageDate}}</td>
 
 							<td ng-if="appointment.user.id == $root.user.id" title="'Obrisi'">
