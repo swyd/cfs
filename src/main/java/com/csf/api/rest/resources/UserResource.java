@@ -75,7 +75,10 @@ public class UserResource {
 		if (userTransfer.getIsActive() == null) {
 			userTransfer.setIsActive(false);
 		}
-		
+		if (userTransfer.getIsAdvanced() == null) {
+			userTransfer.setIsAdvanced(false);
+		}
+
 		User savedUser = userService.save(userTransfer, true);
 
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
@@ -94,14 +97,11 @@ public class UserResource {
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 	}
 
-	@RequestMapping(path = "/{id}/changePassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
-	public UserTransfer changeUserPassword(@PathVariable("id") Integer id,
-			@RequestParam(name = "password", required = false) String password) {
-		User user = userService.find(id);
-		if (user == null) {
-			throw new RestException("User with given ID not found");
-		}
+	@RequestMapping(path = "/changePassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON)
+	@PreAuthorize(value = "isAuthenticated()")
+	public UserTransfer changeUserPassword(@RequestParam(name = "password", required = false) String password) {
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		//TODO add password validation
 		User savedUser = userService.changePassword(user, password);
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 	}
@@ -112,7 +112,7 @@ public class UserResource {
 	 * @return A transfer containing the username and the roles.
 	 */
 	@RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+	@PreAuthorize(value = "isAuthenticated()")
 	public UserTransfer updateUser(@RequestBody UserTransfer userTransfer) {
 		if (userTransfer.getId() == null) {
 			throw new RestException("ID required for update");

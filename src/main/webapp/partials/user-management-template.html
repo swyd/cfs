@@ -38,7 +38,7 @@
 						<div class="form-group">
 							<label>Izaberi datum pocetka i isteka clanarine:</label> <input
 								date-range-picker class="form-control date-picker" type="text"
-								ng-model="vm.date" />
+								ng-model="vm.datePicker.date" />
 						</div>
 						<div class="form-group">
 							<label>Da li je admin: <input type="checkbox" value=""
@@ -46,7 +46,12 @@
 								ng-checked="vm.user.isAdmin">
 							</label>
 						</div>
-
+						<div class="form-group">
+							<label>Da li je admin: <input type="checkbox" value=""
+								class="form-control" name="isAdmin" ng-model="vm.user.isAdvanced"
+								ng-checked="vm.user.isAdvanced">
+							</label>
+						</div>
 						<button type="button" class="btn btn-default pull-right"
 							ng-click="vm.editingInProgress ? vm.saveEditedUser() : vm.createUser()">Sacuvaj</button>
 

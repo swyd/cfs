@@ -41,7 +41,7 @@
 					<li><a href="#!/time-slots">Treninzi</a></li>
 					<li ng-if="$root.user.roles.ROLE_ADMIN"><a
 						href="#!/training-management">Pregled treninga</a></li>
-					<li ng-if="$root.user.roles.ROLE_ADMIN"><a
+					<li ng-if="$root.user.roles.ROLE_ADMIN || $root.user.roles.ROLE_USER"><a
 						href="#!/manage-account">Nalog</a></li>
 					<li ng-if="$root.user.roles.ROLE_ADMIN"><a
 						href="#!/user-management">Korisnici</a></li>
@@ -55,6 +55,9 @@
 							<li><a href="" ng-click="logout()"><span
 									class="fa fa-sign-out"></span> Logout</a></li>
 						</ul></li>
+				</ul>
+				<ul ng-if="$root.user === undefined" class="nav navbar-nav navbar-right">
+					<li><a href="#!/login">Login</a></li>
 				</ul>
 			</div>
 		</div>

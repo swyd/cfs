@@ -8,9 +8,11 @@
 			dataset : null
 		});
 		vm.editingInProgress = false;
-		vm.date = {
-			startDate : null,
-			endDate : null
+		vm.datePicker = {
+			date : {
+				startDate : null,
+				endDate : null
+			}
 		};
 		vm.createUser = createUser;
 		vm.changeRole = changeRole;
@@ -25,9 +27,9 @@
 					function(data) {
 						data.filter(function(el) {
 							el.datePaid = $filter('date')(el.datePaid,
-									"dd-MM-yyyy");
+									"yyyy-MM-dd");
 							el.dateExpiring = $filter('date')(el.dateExpiring,
-									"dd-MM-yyyy");
+									"yyyy-MM-dd");
 						});
 						vm.users = new NgTableParams({}, {
 							dataset : data
@@ -36,6 +38,8 @@
 		}
 
 		function createUser() {
+			vm.user.datePaid = vm.datePicker.date.startDate;
+			vm.user.dateExpiring = vm.datePicker.date.endDate;
 			UsersService.createUser(vm.user).then(function(data) {
 				vm.user.username = null;
 				vm.user.password = null;
@@ -47,6 +51,9 @@
 				vm.user.isActive = null;
 				vm.user.datePaid = null;
 				vm.user.dateExpiring = null;
+				vm.user.isAdvanced = null;
+				vm.datePicker.date.startDate = null;
+				vm.datePicker.date.endDate = null;
 
 				vm.user.id = null;
 				activate();
@@ -66,6 +73,7 @@
 				vm.user.datePaid = null;
 				vm.user.dateExpiring = null;
 				vm.user.id = null;
+				vm.user.isAdvanced = null;
 				activate();
 			})
 		}
@@ -87,8 +95,10 @@
 			vm.user.sessionsLeft = user.sessionsLeft;
 			vm.user.isAdmin = user.isAdmin;
 			vm.user.isActive = user.isActive;
-			vm.date.startDate = moment(Date.parse(user.datePaid)).format('DD-MM-YYYY');
-			vm.date.endDate = moment(Date.parse(user.dateExpiring).format('DD-MM-YYYY'));
+			console.log(user.datePaid);
+			console.log(Date.parse(user.datePaid));
+			vm.datePicker.date.startDate = moment(Date.parse(user.datePaid));
+			vm.datePicker.date.endDate = moment(Date.parse(user.dateExpiring));
 			vm.user.id = user.id;
 
 		}
@@ -112,6 +122,8 @@
 				vm.user.datePaid = null;
 				vm.user.dateExpiring = null;
 				vm.user.id = null;
+				vm.datePicker.date.startDate = null;
+				vm.datePicker.date.endDate = null;
 				activate();
 			});
 		}
