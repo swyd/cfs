@@ -44,12 +44,12 @@
 		<modal title="Promena passworda" visible="vm.showModal">
 		<form name="change-password-form"  data-toggle="validator" role="form">
 			<div class="form-group">
-				<label for="email">Old password</label> <input type="password"
+				<label for="email">Old password</label> <input type="password" ng-model="vm.oldPassword"
 					class="form-control" id="password" placeholder="Enter old password" />
 			</div>
 			<div class="form-group">
 				<label for="inputPassword" class="control-label">Password</label> <label
-					for="password">Password</label> <input type="password"
+					for="password">Password</label> <input type="password" ng-model="vm.newPassword"
 					data-minlength="6" class="form-control" id="inputPassword"
 					placeholder="New Password" required> <span
 					class="help-block">Minimum of 6 characters</span>
@@ -67,7 +67,7 @@
 				$('#change-password-form').validator();
 			</script>
 			<!-- 			<button ng-click="change-password-form.$valid && vm.changePassword()" type="button" class="btn btn-custom-large">Submit</button> -->
-			<button ng-click="vm.changePassword()" type="button"
+			<button ng-click="vm.changePassword(vm.oldPassword, vm.newPassword)" type="submit"
 				class="btn btn-custom-large">Submit</button>
 		</form>
 		</modal>

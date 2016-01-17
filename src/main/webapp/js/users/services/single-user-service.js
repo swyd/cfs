@@ -4,7 +4,8 @@
 		
 		return {
 			getUser: getUser,
-			saveUser: saveUser
+			saveUser: saveUser,
+			changePassword: changePassword
 		}
 		
 		
@@ -26,6 +27,26 @@
 			var deferred = $q.defer();
 
 			$http.put('/rest/user', user)
+			.success(function(data){
+				deferred.resolve(data);
+			})
+			.catch(function(err) {
+				deferred.reject(err);
+			});
+
+			return deferred.promise;
+		}
+		
+		function changePassword(query) {
+			var deferred = $q.defer();
+			
+			var config = {
+	                headers : {
+	                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8;'
+	                }
+	            };
+			
+			$http.post('/rest/user/changePassword', query, config)
 			.success(function(data){
 				deferred.resolve(data);
 			})

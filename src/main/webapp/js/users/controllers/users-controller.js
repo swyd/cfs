@@ -95,8 +95,6 @@
 			vm.user.sessionsLeft = user.sessionsLeft;
 			vm.user.isAdmin = user.isAdmin;
 			vm.user.isActive = user.isActive;
-			console.log(user.datePaid);
-			console.log(Date.parse(user.datePaid));
 			vm.datePicker.date.startDate = moment(Date.parse(user.datePaid));
 			vm.datePicker.date.endDate = moment(Date.parse(user.dateExpiring));
 			vm.user.id = user.id;

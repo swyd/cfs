@@ -8,7 +8,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.csf.api.rest.exception.RestException;
 import com.csf.api.rest.transfer.model.UserTransfer;
+import com.csf.persistance.dao.timeslot.TimeSlotUsageDao;
 import com.csf.persistance.dao.user.UserDao;
 import com.csf.persistence.entity.User;
 
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private TimeSlotUsageDao usageDao;
 
 	@Override
 	public List<User> findAll() {
@@ -42,6 +47,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void delete(Integer id) {
 		// check if just set to inactive
+		usageDao.removeAllSessionsForUser(id);
 		userDao.delete(id);
 	}
 
@@ -56,8 +62,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User changePassword(User user, String password) {
-		user.setPassword(passwordEncoder.encode(password));
+	public User changePassword(User user, String oldPassword, String newPassword) {
+		//add more validations
+		if(!passwordEncoder.matches(oldPassword, user.getPassword())){
+			throw new RestException("Old password doesn't match the existing one");
+		}
+		user.setPassword(passwordEncoder.encode(newPassword));
 		return userDao.save(user);
 	}
 

@@ -26,8 +26,13 @@
 	        vm.showModal = !vm.showModal;
 	    }
 		
-		function changePassword(){
-			console.log(vm.password);
+		function changePassword(oldPassword, newPassword){
+			SingleUserService.changePassword($.param({
+				oldPass : oldPassword,
+				newPass : newPassword
+			})).then(function(data){
+				vm.user = data;
+			});
 		}
 		
 		function saveUser() {

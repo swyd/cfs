@@ -19,7 +19,7 @@ public interface UserService {
 
 	UserDetails loadUserByUsername(String email);
 
-	User changePassword(User user, String password);
+	User changePassword(User user, String password, String newPassword);
 
 	User update(UserTransfer userTransfer, User user);
 

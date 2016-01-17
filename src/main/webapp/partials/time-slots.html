@@ -10,10 +10,6 @@
 					<button ng-repeat="var in vm.trainingDates.trainingDates" id="buttonToday" type="button" class="btn btn-custom-large"
 						ng-click="vm.render(var.startsAt); vm.setDate(var.startsAt)">Prijave
 						{{var.startsAt}}</button>
-
-					<!-- 						<button id="buttonTommorow" type="button" class="btn btn-custom-large " -->
-					<!-- 							ng-disabled="timeSlot.slotsRemaining == 0" -->
-					<!-- 							ng-click="vm.renderTommorow(); vm.setDate(vm.tommorow)">Prijave {{vm.tommorow}}</button> -->
 				</h3>
 				</br>
 				<div class="buttons-container">

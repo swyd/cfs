@@ -2,6 +2,7 @@ package com.csf.api.rest.resources;
 
 import java.util.List;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,12 +98,13 @@ public class UserResource {
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 	}
 
-	@RequestMapping(path = "/changePassword", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(path = "/changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "isAuthenticated()")
-	public UserTransfer changeUserPassword(@RequestParam(name = "password", required = false) String password) {
+	public UserTransfer changeUserPassword(@RequestParam("newPass") String newPassword,
+			@RequestParam("oldPass") String oldPassword) {
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		//TODO add password validation
-		User savedUser = userService.changePassword(user, password);
+		// TODO add password validation
+		User savedUser = userService.changePassword(user, oldPassword, newPassword);
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 	}
 

@@ -23,6 +23,8 @@ import javax.persistence.Table;
 				+ "t.usageDate = :forDate AND t.timeSlot.id = :timeSlotId"),
 		@NamedQuery(name = "TimeSlotUsage.findAllUsageFromTo", query = "SELECT t FROM TimeSlotUsage t WHERE "
 				+ "t.usageDate >= :fromDate AND t.usageDate <= :toDate"),
+		@NamedQuery(name = "TimeSlotUsage.removeAllSessionsForUser", query = "DELETE FROM TimeSlotUsage t WHERE "
+				+ "t.user.id = :id"),
 		@NamedQuery(name = "TimeSlotUsage.checkIfExistsForDate", query = "SELECT COUNT(t) FROM TimeSlotUsage t WHERE "
 				+ "t.usageDate = :usageDate AND t.user.id = :userId") })
 

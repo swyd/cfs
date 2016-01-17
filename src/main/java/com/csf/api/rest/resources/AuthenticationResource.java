@@ -42,7 +42,7 @@ public class AuthenticationResource {
 	 *            The password of the user.
 	 * @return A transfer containing the authentication token.
 	 */
-	@RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
 	public TokenTransfer authenticate(@FormParam("username") String username, @FormParam("password") String password) {
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,

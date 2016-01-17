@@ -17,5 +17,7 @@ public interface TimeSlotUsageDao extends GenericDao<TimeSlotUsage, Integer>{
 	Long getSessionsRemainingForDateAndSlot(Integer timeSlotId, Date forDate);
 
 	List<TimeSlotUsage> findAllTimeSlotUsageFromTo(Date fromDate, Date toDate);
+
+	void removeAllSessionsForUser(Integer id);
 	
 }

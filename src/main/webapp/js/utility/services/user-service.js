@@ -2,7 +2,7 @@
 	
 	angular.module('csf.services').factory('UserService', function($resource) {
 		
-		return $resource('rest/user/:action', {},
+		return $resource('http://ec2-52-27-30-179.us-west-2.compute.amazonaws.com:8080/rest/user/:action', {},
 			{
 				authenticate: {
 					method: 'POST',
