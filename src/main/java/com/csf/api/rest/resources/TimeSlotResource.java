@@ -94,16 +94,22 @@ public class TimeSlotResource {
 
 		TimeSlotUsage usage = timeSlotService.findTimeSlotUsage(timeSlotId);
 
-		if (usage.getUser().getId() != user.getId()) {
+		if (!user.getIsAdmin() && usage.getUser().getId() != user.getId()) {
 			throw new RestException("You cannot cancel a training that is not shedueled by you.");
 		}
-		if (new DateTime().getHourOfDay() >= 15 && isToday(usage.getUsageDate())) {
+		if (!user.getIsAdmin() && new DateTime().getHourOfDay() >= 15 && isToday(usage.getUsageDate())) {
 			throw new RestException("You cannot cancel your training after 15h");
 		}
-
+		
 		timeSlotService.deleteUsage(timeSlotId);
-		user.setSessionsLeft(user.getSessionsLeft() + 1);
-		userService.save(user, false);
+		if(usage.getUser().getId() != user.getId()){
+			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
+			userService.save(usage.getUser(), false);
+		}else{
+			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
+			userService.save(user, false);
+		}
+		
 
 		return new StringTransfer("Training session canceled.");
 	}

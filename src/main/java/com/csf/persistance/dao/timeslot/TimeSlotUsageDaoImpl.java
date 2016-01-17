@@ -64,9 +64,9 @@ public class TimeSlotUsageDaoImpl extends JpaDao<TimeSlotUsage, Integer> impleme
 
 	@Override
 	public void removeAllSessionsForUser(Integer id) {
-		this.getEntityManager()
-		.createNamedQuery("TimeSlotUsage.removeAllSessionsForUser", TimeSlotUsage.class)
-		.setParameter("userId", id).executeUpdate();
+		StringBuilder sb = new StringBuilder();
+		sb.append("DELETE FROM TimeSlotUsage t WHERE t.user.id = ").append(id);
+		this.getEntityManager().createQuery(sb.toString()).executeUpdate();
 	}
 
 }
