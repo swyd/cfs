@@ -16,58 +16,58 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.GenericFilterBean;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
-  
-  private static final String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
-  
-  private final UserDetailsService userService;
 
-  public AuthenticationTokenProcessingFilter(UserDetailsService userService) {
-    this.userService = userService;
-  }
+	private static final String AUTH_HEADER_NAME = "X-AUTH-TOKEN";
 
-  @Override
-  public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-      throws IOException, ServletException {
-    HttpServletRequest httpRequest = this.getAsHttpRequest(request);
+	private final UserDetailsService userService;
 
-    String authToken = this.extractAuthTokenFromRequest(httpRequest);
-    String userName = TokenUtils.getUserNameFromToken(authToken);
+	public AuthenticationTokenProcessingFilter(UserDetailsService userService) {
+		this.userService = userService;
+	}
 
-    if (userName != null) {
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest httpRequest = this.getAsHttpRequest(request);
 
-      UserDetails userDetails = this.userService.loadUserByUsername(userName);
+		String authToken = this.extractAuthTokenFromRequest(httpRequest);
+		String userName = TokenUtils.getUserNameFromToken(authToken);
 
-      if (TokenUtils.validateToken(authToken, userDetails)) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-          authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-              userDetails.getAuthorities());
-          SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-      }
+		if (userName != null) {
 
-    }
+			UserDetails userDetails = this.userService.loadUserByUsername(userName);
 
-    chain.doFilter(request, response);
-  }
+			if (TokenUtils.validateToken(authToken, userDetails)) {
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				if (authentication == null) {
+					authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
+							userDetails.getAuthorities());
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}
+			}
 
-  private HttpServletRequest getAsHttpRequest(ServletRequest request) {
-    if (!(request instanceof HttpServletRequest)) {
-      throw new RuntimeException("Expecting an HTTP request");
-    }
+		}
 
-    return (HttpServletRequest) request;
-  }
+		chain.doFilter(request, response);
+	}
 
-  private String extractAuthTokenFromRequest(HttpServletRequest httpRequest) {
-    /* Get token from header */
-    String authToken = httpRequest.getHeader(AUTH_HEADER_NAME);
+	private HttpServletRequest getAsHttpRequest(ServletRequest request) {
+		if (!(request instanceof HttpServletRequest)) {
+			throw new RuntimeException("Expecting an HTTP request");
+		}
 
-    /* If token not found get it from request parameter */
-    if (authToken == null) {
-      authToken = httpRequest.getParameter("token");
-    }
+		return (HttpServletRequest) request;
+	}
 
-    return authToken;
-  }
+	private String extractAuthTokenFromRequest(HttpServletRequest httpRequest) {
+		/* Get token from header */
+		String authToken = httpRequest.getHeader(AUTH_HEADER_NAME);
+
+		/* If token not found get it from request parameter */
+		if (authToken == null) {
+			authToken = httpRequest.getParameter("token");
+		}
+
+		return authToken;
+	}
 }

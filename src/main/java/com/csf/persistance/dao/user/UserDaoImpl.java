@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.csf.api.rest.exception.RestException;
 import com.csf.persistance.dao.JpaDao;
 import com.csf.persistence.entity.User;
 
@@ -29,7 +28,7 @@ public class UserDaoImpl extends JpaDao<User, Integer> implements UserDao {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = findUserByUsername(username);
 		if (null == user) {
-			throw new RestException("The user with name " + username + " was not found");
+			throw new UsernameNotFoundException("Korisnicko ime " + username + " ne postoji");
 		}
 
 		return user;

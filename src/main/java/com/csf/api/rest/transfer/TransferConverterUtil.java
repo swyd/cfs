@@ -29,7 +29,7 @@ public class TransferConverterUtil {
 
 	public static UserTransfer convertUserToTransfer(User user) {
 		return new UserTransfer(user.getId(), user.getEmail(), user.getName(), user.getSurname(), user.getUsername(),
-				user.getSessionsLeft(), user.getIsActive(), user.getDatePaid(), user.getDateExpiring(),
+				user.getSessionsLeft(), user.getIsActive(), user.getIsAdvanced(), user.getDatePaid(), user.getDateExpiring(),
 				createRoleMap(user.getAuthorities()));
 	}
 

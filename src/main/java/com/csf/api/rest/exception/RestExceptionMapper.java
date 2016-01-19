@@ -1,5 +1,6 @@
 package com.csf.api.rest.exception;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.exception.ConstraintViolationException;
@@ -33,7 +34,7 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 		error.setMessage(exception.getLocalizedMessage());
 		return error;
 	}
-	
+
 	@ExceptionHandler(UsernameNotFoundException.class)
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
@@ -41,36 +42,46 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
 		logger.error("Exception occured: {}", exception);
 		error.setStatus(HttpStatus.UNAUTHORIZED.value());
-		error.setMessage(exception.getLocalizedMessage());
+		error.setMessage("Pogresan username ili password");
 		return error;
 	}
-	
+
 	@ExceptionHandler(ConstraintViolationException.class)
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ErrorDetailTransfer constraintViolation(HttpServletRequest request, Exception exception) {
+		ErrorDetailTransfer error = new ErrorDetailTransfer();
+		logger.error("Exception occured: {}", exception);
+		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.setMessage("Korisnicko ime vec postoji, izaberite drugo.");
+		return error;
+	}
+
+	@ExceptionHandler(BadCredentialsException.class)
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	public ErrorDetailTransfer badCredentials(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
 		logger.error("Exception occured: {}", exception);
 		error.setStatus(HttpStatus.UNAUTHORIZED.value());
-		error.setMessage("Korisnicko ime ili sifra su pogresni");
-		return error;
-	}
-	
-	@ExceptionHandler(BadCredentialsException.class)
-	@ResponseBody
-	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-	public ErrorDetailTransfer constraintViolation(HttpServletRequest request, Exception exception) {
-		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
-		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.setMessage("Pogresan username ili password");
 		return error;
 	}
-	
-	
+
+	@ExceptionHandler(PersistenceException.class)
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ErrorDetailTransfer persistenceException(HttpServletRequest request, Exception exception) {
+		ErrorDetailTransfer error = new ErrorDetailTransfer();
+		logger.error("Exception occured: {}", exception);
+		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.setMessage("Korisnicko ime vec postoji, izaberite drugo.");
+		return error;
+	}
+
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	@ResponseBody
-	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	public ErrorDetailTransfer alreadyExistsError(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
 		logger.error("Exception occured: {}", exception);
@@ -78,7 +89,7 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 		error.setMessage("Korisnicko ime vec postoji, izaberite drugo.");
 		return error;
 	}
-	
+
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)

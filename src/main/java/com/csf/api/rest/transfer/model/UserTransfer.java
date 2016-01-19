@@ -22,6 +22,8 @@ public class UserTransfer {
 	private Boolean isActive;
 
 	private Boolean isAdmin;
+	
+	private Boolean isAdvanced;
 
 	private Date datePaid;
 
@@ -33,7 +35,7 @@ public class UserTransfer {
 
 	}
 
-	public UserTransfer(Integer id,  String email, String name, String surname, String username, Integer sessionsLeft, Boolean isActive, Date datePaid, Date dateExpiring,
+	public UserTransfer(Integer id,  String email, String name, String surname, String username, Integer sessionsLeft, Boolean isActive, Boolean isAdvanced, Date datePaid, Date dateExpiring,
 			 Map<String, Boolean> roles) {
 		this.id = id;
 		this.email = email;
@@ -42,6 +44,7 @@ public class UserTransfer {
 		this.username = username;
 		this.sessionsLeft = sessionsLeft;
 		this.isActive = isActive;
+		this.isAdvanced = isAdvanced;
 		this.dateExpiring = dateExpiring;
 		this.datePaid = datePaid;
 		this.roles = roles;
@@ -148,6 +151,14 @@ public class UserTransfer {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public Boolean getIsAdvanced() {
+		return isAdvanced;
+	}
+
+	public void setIsAdvanced(Boolean isAdvanced) {
+		this.isAdvanced = isAdvanced;
 	}
 
 }

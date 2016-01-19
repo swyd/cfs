@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -149,19 +150,23 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	@Override
 	public TimeSlotUsage create(User user, Integer timeSlotId, Date forDate) {
 		if (user.getSessionsLeft() == 0) {
-			throw new RestException("You dont have anymore trainings left");
+			throw new RestException("Nemate vise treninga, uplatite clanarinu.");
 		}
 
 		if (timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
-			throw new RestException("You already have a training sheduled for today");
+			throw new RestException("Vec imate zakazan trening za danas");
 		}
 
 		Long sessionsUsed = timeSlotUsageDao.getSessionsRemainingForDateAndSlot(timeSlotId, forDate);
 
 		if (sessionsUsed == 14) {
-			throw new RestException("No more slots available for this time.");
+			throw new RestException("Nema vise slobodnih mesta za zeljeni termin..");
 		}
-		//TODO add time check 
+
+		if (checkIsTodayAfterThree(new DateTime(forDate))) {
+			throw new RestException("Zakazivanje treninga nije moguce posle 15h tekuceg dana, ukoliko ima slobodnih mesta pozovite.");
+		}
+
 		user.setSessionsLeft(user.getSessionsLeft() - 1);
 		user = userDao.save(user);
 
@@ -174,6 +179,18 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		timeSlotUsage.setUsageDate(forDate);
 
 		return timeSlotUsageDao.save(timeSlotUsage);
+	}
+
+	private Boolean checkIsTodayAfterThree(DateTime date) {
+		DateTime now = new DateTime();
+		if (now.getDayOfYear() == date.getDayOfYear()) {
+			if (date.getHourOfDay() >= 15) {
+				return true;
+			}
+		}else if(now.getDayOfYear() > date.getDayOfYear()){
+			return true;
+		}
+		return false;
 	}
 
 	@Override

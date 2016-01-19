@@ -60,11 +60,11 @@ public class TimeSlotResource {
 		if (forDate == null) {
 			forDate = new Date();
 		}
-		
-		if(new DateTime(forDate).getDayOfWeek() == 7){
+
+		if (new DateTime(forDate).getDayOfWeek() == 7) {
 			return new ArrayList<TimeSlotTransfer>();
 		}
-		
+
 		List<TimeSlotTransfer> timeSlots = timeSlotService.findAllWithRemainingForDate(user, forDate);
 
 		return timeSlots;
@@ -95,29 +95,32 @@ public class TimeSlotResource {
 		TimeSlotUsage usage = timeSlotService.findTimeSlotUsage(timeSlotId);
 
 		if (!user.getIsAdmin() && usage.getUser().getId() != user.getId()) {
-			throw new RestException("You cannot cancel a training that is not shedueled by you.");
+			throw new RestException("Ne mozete otkazati trening ako ga niste vi zakazali.");
 		}
-		if (!user.getIsAdmin() && new DateTime().getHourOfDay() >= 15 && isToday(usage.getUsageDate())) {
-			throw new RestException("You cannot cancel your training after 15h");
+		if (!user.getIsAdmin() && isTodayOrLater(usage.getUsageDate())) {
+			throw new RestException("Ne mozete otkazati trening posle 15h.");
 		}
-		//TODO add time validation
+
 		timeSlotService.deleteUsage(timeSlotId);
-		if(usage.getUser().getId() != user.getId()){
+		if (usage.getUser().getId() != user.getId()) {
 			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
 			userService.save(usage.getUser(), false);
-		}else{
+		} else {
 			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
 			userService.save(user, false);
 		}
-		
 
-		return new StringTransfer("Training session canceled.");
+		return new StringTransfer("Trening otkazan.");
 	}
 
-	private Boolean isToday(Date date) {
+	private Boolean isTodayOrLater(Date date) {
 		DateTime now = new DateTime();
 		DateTime input = new DateTime(date);
 		if (now.getDayOfYear() == input.getDayOfYear()) {
+			if (input.getHourOfDay() >= 15) {
+				return true;
+			}
+		} else if (now.getDayOfYear() > input.getDayOfYear()) {
 			return true;
 		}
 		return false;
