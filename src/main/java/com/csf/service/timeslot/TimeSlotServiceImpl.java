@@ -163,7 +163,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			throw new RestException("Nema vise slobodnih mesta za zeljeni termin..");
 		}
 
-		if (checkIsTodayAfterThree(new DateTime(forDate))) {
+		if (!user.getIsAdmin() && checkIsTodayAfterThree(new DateTime(forDate))) {
 			throw new RestException("Zakazivanje treninga nije moguce posle 15h tekuceg dana, ukoliko ima slobodnih mesta pozovite.");
 		}
 
@@ -184,7 +184,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	private Boolean checkIsTodayAfterThree(DateTime date) {
 		DateTime now = new DateTime();
 		if (now.getDayOfYear() == date.getDayOfYear()) {
-			if (date.getHourOfDay() >= 15) {
+			if (now.getHourOfDay() >= 15) {
 				return true;
 			}
 		}else if(now.getDayOfYear() > date.getDayOfYear()){

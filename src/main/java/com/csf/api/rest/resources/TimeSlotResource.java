@@ -117,7 +117,7 @@ public class TimeSlotResource {
 		DateTime now = new DateTime();
 		DateTime input = new DateTime(date);
 		if (now.getDayOfYear() == input.getDayOfYear()) {
-			if (input.getHourOfDay() >= 15) {
+			if (now.getHourOfDay() >= 15) {
 				return true;
 			}
 		} else if (now.getDayOfYear() > input.getDayOfYear()) {
