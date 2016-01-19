@@ -2,6 +2,7 @@ package com.csf.api.rest.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -44,8 +45,7 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 		return error;
 	}
 	
-	
-	@ExceptionHandler(BadCredentialsException.class)
+	@ExceptionHandler(ConstraintViolationException.class)
 	@ResponseBody
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	public ErrorDetailTransfer badCredentials(HttpServletRequest request, Exception exception) {
@@ -53,6 +53,17 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 		logger.error("Exception occured: {}", exception);
 		error.setStatus(HttpStatus.UNAUTHORIZED.value());
 		error.setMessage("Korisnicko ime ili sifra su pogresni");
+		return error;
+	}
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	@ResponseBody
+	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+	public ErrorDetailTransfer constraintViolation(HttpServletRequest request, Exception exception) {
+		ErrorDetailTransfer error = new ErrorDetailTransfer();
+		logger.error("Exception occured: {}", exception);
+		error.setStatus(HttpStatus.BAD_REQUEST.value());
+		error.setMessage("Korisnicko ime vec postoji");
 		return error;
 	}
 	

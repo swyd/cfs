@@ -100,7 +100,7 @@ public class TimeSlotResource {
 		if (!user.getIsAdmin() && new DateTime().getHourOfDay() >= 15 && isToday(usage.getUsageDate())) {
 			throw new RestException("You cannot cancel your training after 15h");
 		}
-		
+		//TODO add time validation
 		timeSlotService.deleteUsage(timeSlotId);
 		if(usage.getUser().getId() != user.getId()){
 			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);

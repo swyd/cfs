@@ -161,7 +161,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		if (sessionsUsed == 14) {
 			throw new RestException("No more slots available for this time.");
 		}
-		
+		//TODO add time check 
 		user.setSessionsLeft(user.getSessionsLeft() - 1);
 		user = userDao.save(user);
 
