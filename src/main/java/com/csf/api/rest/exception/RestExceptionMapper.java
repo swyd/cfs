@@ -63,7 +63,7 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
 		logger.error("Exception occured: {}", exception);
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
-		error.setMessage("Korisnicko ime vec postoji");
+		error.setMessage("Pogresan username ili password");
 		return error;
 	}
 	
