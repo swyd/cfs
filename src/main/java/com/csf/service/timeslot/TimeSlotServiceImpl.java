@@ -136,6 +136,9 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	}
 
 	private Boolean checkIfAllAreBooked(Map<String, Integer> map) {
+		if (map.containsKey("17") && map.get("17") > 0) {
+			return true;
+		}
 		for (String key : map.keySet()) {
 			if (!key.equals("17")) {
 				if (map.get(key) > 0) {
@@ -153,7 +156,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			throw new RestException("Nemate vise treninga, uplatite clanarinu.");
 		}
 
-		if (timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
+		if (!user.getIsAdmin() && timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
 			throw new RestException("Vec imate zakazan trening za danas");
 		}
 
@@ -164,7 +167,8 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		}
 
 		if (!user.getIsAdmin() && checkIsTodayAfterThree(new DateTime(forDate))) {
-			throw new RestException("Zakazivanje treninga nije moguce posle 15h tekuceg dana, ukoliko ima slobodnih mesta pozovite.");
+			throw new RestException(
+					"Zakazivanje treninga nije moguce posle 15h tekuceg dana, ukoliko ima slobodnih mesta pozovite.");
 		}
 
 		user.setSessionsLeft(user.getSessionsLeft() - 1);
@@ -187,7 +191,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			if (now.getHourOfDay() >= 15) {
 				return true;
 			}
-		}else if(now.getDayOfYear() > date.getDayOfYear()){
+		} else if (now.getDayOfYear() > date.getDayOfYear()) {
 			return true;
 		}
 		return false;
