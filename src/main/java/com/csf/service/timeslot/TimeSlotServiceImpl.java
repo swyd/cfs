@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.csf.api.rest.exception.RestException;
@@ -54,7 +55,39 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 	@Override
 	public void deleteUsage(Integer id) {
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		TimeSlotUsage usage = findTimeSlotUsage(id);
+
+		if (!user.isAdmin() && usage.getUser().getId() != user.getId()) {
+			throw new RestException("Ne mozete otkazati trening ako ga niste vi zakazali.");
+		}
+		if (!user.isAdmin() && isTodayOrLater(usage.getUsageDate())) {
+			throw new RestException("Ne mozete otkazati trening posle 15h.");
+		}
+
 		timeSlotUsageDao.delete(id);
+			
+		if (usage.getUser().getId() != user.getId()) {
+			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
+			userDao.save(usage.getUser());
+		} else {
+			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
+			userDao.save(user);
+		}
+	}
+
+	private Boolean isTodayOrLater(Date date) {
+		DateTime now = new DateTime();
+		DateTime input = new DateTime(date);
+		if (now.getDayOfYear() == input.getDayOfYear()) {
+			if (now.getHourOfDay() >= 15) {
+				return true;
+			}
+		} else if (now.getDayOfYear() > input.getDayOfYear()) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -77,7 +110,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		Map<String, Integer> remainingMap = new HashMap<String, Integer>();
 		Boolean isAdvanced = user.getIsAdvanced();
-		
+
 		for (TimeSlot timeSlot : timeSlotDao.findAll()) {
 			if (isAdvanced && timeSlot.getIsAdvanced()) {
 				timeSlots.add(timeSlot);
