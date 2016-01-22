@@ -21,10 +21,14 @@ public interface UserService {
 
 	User changePassword(User user, String password, String newPassword);
 
-	User update(UserTransfer userTransfer, User user);
+	User update(UserTransfer userTransfer);
 
 	User save(User user, Boolean encode);
 
 	User save(UserTransfer userTransfer);
+
+	User createUser(User user);
+
+	User changeUserRole(Integer id);
 
 }

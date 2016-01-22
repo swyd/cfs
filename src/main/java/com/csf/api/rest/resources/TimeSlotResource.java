@@ -94,10 +94,10 @@ public class TimeSlotResource {
 
 		TimeSlotUsage usage = timeSlotService.findTimeSlotUsage(timeSlotId);
 
-		if (!user.getIsAdmin() && usage.getUser().getId() != user.getId()) {
+		if (!user.isAdmin() && usage.getUser().getId() != user.getId()) {
 			throw new RestException("Ne mozete otkazati trening ako ga niste vi zakazali.");
 		}
-		if (!user.getIsAdmin() && isTodayOrLater(usage.getUsageDate())) {
+		if (!user.isAdmin() && isTodayOrLater(usage.getUsageDate())) {
 			throw new RestException("Ne mozete otkazati trening posle 15h.");
 		}
 

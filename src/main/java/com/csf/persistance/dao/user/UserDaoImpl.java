@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
@@ -72,6 +73,20 @@ public class UserDaoImpl extends JpaDao<User, Integer> implements UserDao {
 		}
 
 		return users.iterator().next();
+	}
+
+	@Override
+	public User changeUserRole(Integer id) {
+		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
+		final CriteriaUpdate<User> update = builder.createCriteriaUpdate(this.entityClass);
+
+		Root<User> root = update.from(this.entityClass);
+		update.where(builder.equal(root.get("id"), id));
+		
+		update.set(root.<Boolean>get("isAdmin"), root.<Boolean>get("isAdmin"));
+		this.getEntityManager().createQuery(update).executeUpdate();
+		
+		return this.find(id);
 	}
 
 }

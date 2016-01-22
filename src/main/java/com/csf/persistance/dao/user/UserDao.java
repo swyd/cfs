@@ -12,4 +12,6 @@ public interface UserDao extends GenericDao<User, Integer>, UserDetailsService {
 
 	User findUserByUsername(String username) throws UsernameNotFoundException;
 
+	User changeUserRole(Integer id);
+
 }

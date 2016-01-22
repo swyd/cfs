@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +22,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name = "csf_user")
 public class User implements Serializable, UserDetails {
+
+	private static final String ROLE_ADMIN = "ADMIN";
+	private static final String ROLE_USER = "USER";
+//	private static final String ROLE_COACH = "COACH";
 
 	/**
 	 * 
@@ -43,15 +49,15 @@ public class User implements Serializable, UserDetails {
 	@Column(name = "sessions_left")
 	private Integer sessionsLeft;
 
-	@Column(name = "isadmin")
+	@JoinColumn(name = "isadmin")
 	private Boolean isAdmin;
 
 	@Column(name = "isactive")
 	private Boolean isActive;
-	
+
 	@Column(name = "date_paid")
 	private Date datePaid;
-	
+
 	@Column(name = "date_expiring")
 	private Date dateExpiring;
 
@@ -60,7 +66,10 @@ public class User implements Serializable, UserDetails {
 
 	@Column(name = "isadvanced")
 	private Boolean isAdvanced;
-	
+
+	@OneToMany(mappedBy = "user")
+	private Set<ExcerciseResult> excerciseResults;
+
 	public User() {
 		/* Reflection instantiation */
 	}
@@ -133,13 +142,21 @@ public class User implements Serializable, UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 
-		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+		authorities.add(new SimpleGrantedAuthority(ROLE_USER));
 
 		if (this.isAdmin) {
-			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+			authorities.add(new SimpleGrantedAuthority(ROLE_ADMIN));
 		}
 
+		// if (this.getUserRole().getRole().equals(ROLE_COACH)) {
+		// authorities.add(new SimpleGrantedAuthority(ROLE_ADMIN));
+		// }
+
 		return authorities;
+	}
+
+	public boolean isAdmin() {
+		return isAdmin;
 	}
 
 	@Override
@@ -166,7 +183,7 @@ public class User implements Serializable, UserDetails {
 	public String getUsername() {
 		return this.username;
 	}
-	
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -195,5 +212,12 @@ public class User implements Serializable, UserDetails {
 		this.isAdvanced = isAdvanced;
 	}
 
-	
+	public Set<ExcerciseResult> getExcerciseResults() {
+		return excerciseResults;
+	}
+
+	public void setExcerciseResults(Set<ExcerciseResult> excerciseResults) {
+		this.excerciseResults = excerciseResults;
+	}
+
 }

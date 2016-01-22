@@ -2,7 +2,6 @@ package com.csf.api.rest.resources;
 
 import java.util.List;
 
-import javax.ws.rs.FormParam;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,18 +68,8 @@ public class UserResource {
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
-	public UserTransfer createUser(@RequestBody User userTransfer) {
-		if (userTransfer.getIsAdmin() == null) {
-			userTransfer.setIsAdmin(false);
-		}
-		if (userTransfer.getIsActive() == null) {
-			userTransfer.setIsActive(false);
-		}
-		if (userTransfer.getIsAdvanced() == null) {
-			userTransfer.setIsAdvanced(false);
-		}
-
-		User savedUser = userService.save(userTransfer, true);
+	public UserTransfer createUser(@RequestBody User user) {
+		User savedUser = userService.createUser(user);
 
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 
@@ -89,13 +78,8 @@ public class UserResource {
 	@RequestMapping(path = "/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
 	public UserTransfer changeUserRole(@PathVariable("id") Integer id) {
-		User user = userService.find(id);
-		if (user == null) {
-			throw new RestException("User with given ID not found");
-		}
-		user.setIsAdmin(!user.getIsAdmin());
-		User savedUser = userService.save(user, false);
-		return TransferConverterUtil.convertUserToTransfer(savedUser);
+		User user = userService.changeUserRole(id);
+		return TransferConverterUtil.convertUserToTransfer(user);
 	}
 
 	@RequestMapping(path = "/changePassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
@@ -119,11 +103,7 @@ public class UserResource {
 		if (userTransfer.getId() == null) {
 			throw new RestException("ID required for update");
 		}
-		User user = userService.find(userTransfer.getId());
-		if (user == null) {
-			throw new RestException("User with given ID not found");
-		}
-		User savedUser = userService.update(userTransfer, user);
+		User savedUser = userService.update(userTransfer);
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 	}
 

@@ -77,11 +77,18 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		Map<String, Integer> remainingMap = new HashMap<String, Integer>();
 		Boolean isAdvanced = user.getIsAdvanced();
+		
 		for (TimeSlot timeSlot : timeSlotDao.findAll()) {
 			if (isAdvanced && timeSlot.getIsAdvanced()) {
 				timeSlots.add(timeSlot);
 			} else if (!isAdvanced && !timeSlot.getIsAdvanced()) {
-				timeSlots.add(timeSlot);
+				if (new DateTime(date).getDayOfWeek() == 6) {
+					if (Integer.parseInt(timeSlot.getStartsAt()) < 19) {
+						timeSlots.add(timeSlot);
+					}
+				} else {
+					timeSlots.add(timeSlot);
+				}
 			}
 		}
 
@@ -156,7 +163,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			throw new RestException("Nemate vise treninga, uplatite clanarinu.");
 		}
 
-		if (!user.getIsAdmin() && timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
+		if (!user.isAdmin() && timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
 			throw new RestException("Vec imate zakazan trening za danas");
 		}
 
@@ -166,7 +173,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			throw new RestException("Nema vise slobodnih mesta za zeljeni termin..");
 		}
 
-		if (!user.getIsAdmin() && checkIsTodayAfterThree(new DateTime(forDate))) {
+		if (!user.isAdmin() && checkIsTodayAfterThree(new DateTime(forDate))) {
 			throw new RestException(
 					"Zakazivanje treninga nije moguce posle 15h tekuceg dana, ukoliko ima slobodnih mesta pozovite.");
 		}

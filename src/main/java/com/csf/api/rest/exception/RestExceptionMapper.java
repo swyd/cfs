@@ -29,7 +29,11 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	public ErrorDetailTransfer unauthorizedError(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
+		if(logger.isDebugEnabled()){
+			logger.error("Exception occured: {}", exception);
+		}else{
+			logger.error("Exception occured: {}", exception.getLocalizedMessage());
+		}
 		error.setStatus(HttpStatus.UNAUTHORIZED.value());
 		error.setMessage(exception.getLocalizedMessage());
 		return error;
@@ -40,7 +44,11 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	public ErrorDetailTransfer badUsernamPassword(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
+		if(logger.isDebugEnabled()){
+			logger.error("Exception occured: {}", exception);
+		}else{
+			logger.error("Exception occured: {}", exception.getLocalizedMessage());
+		}		
 		error.setStatus(HttpStatus.UNAUTHORIZED.value());
 		error.setMessage("Pogresan username ili password");
 		return error;
@@ -51,7 +59,11 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	public ErrorDetailTransfer constraintViolation(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
+		if(logger.isDebugEnabled()){
+			logger.error("Exception occured: {}", exception);
+		}else{
+			logger.error("Exception occured: {}", exception.getLocalizedMessage());
+		}
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.setMessage("Korisnicko ime vec postoji, izaberite drugo.");
 		return error;
@@ -62,7 +74,11 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 	@ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 	public ErrorDetailTransfer badCredentials(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
+		if(logger.isDebugEnabled()){
+			logger.error("Exception occured: {}", exception);
+		}else{
+			logger.error("Exception occured: {}", exception.getLocalizedMessage());
+		}
 		error.setStatus(HttpStatus.UNAUTHORIZED.value());
 		error.setMessage("Pogresan username ili password");
 		return error;
@@ -73,7 +89,11 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	public ErrorDetailTransfer persistenceException(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
+		if(logger.isDebugEnabled()){
+			logger.error("Exception occured: {}", exception);
+		}else{
+			logger.error("Exception occured: {}", exception.getLocalizedMessage());
+		}
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.setMessage("Korisnicko ime vec postoji, izaberite drugo.");
 		return error;
@@ -84,7 +104,11 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	public ErrorDetailTransfer alreadyExistsError(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
+		if(logger.isDebugEnabled()){
+			logger.error("Exception occured: {}", exception);
+		}else{
+			logger.error("Exception occured: {}", exception.getLocalizedMessage());
+		}
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.setMessage("Korisnicko ime vec postoji, izaberite drugo.");
 		return error;
@@ -95,7 +119,11 @@ public class RestExceptionMapper extends ResponseEntityExceptionHandler {
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	public ErrorDetailTransfer myError(HttpServletRequest request, Exception exception) {
 		ErrorDetailTransfer error = new ErrorDetailTransfer();
-		logger.error("Exception occured: {}", exception);
+		if(logger.isDebugEnabled()){
+			logger.error("Exception occured: {}", exception);
+		}else{
+			logger.error("Exception occured: {}", exception.getLocalizedMessage());
+		}
 		error.setStatus(HttpStatus.BAD_REQUEST.value());
 		error.setMessage(exception.getLocalizedMessage());
 		return error;

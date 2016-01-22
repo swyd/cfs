@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.joda.time.DateTime;
+
 @Entity
 // @NamedQueries({
 // @NamedQuery(name = "ContractUsage.findAll", query = "SELECT c FROM
@@ -35,7 +37,10 @@ public class TimeSlot implements Serializable {
 
 	@Column(name = "isadvanced")
 	private Boolean isAdvanced;
-
+	
+	@Column(name = "active_on_days")
+	private String daysActive;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -68,4 +73,20 @@ public class TimeSlot implements Serializable {
 		this.isAdvanced = isAdvanced;
 	}
 
+	public String getDaysActive() {
+		return daysActive;
+	}
+
+	public void setDaysActive(String daysActive) {
+		this.daysActive = daysActive;
+	}
+	
+	public boolean isActiveForDate(DateTime now){
+		String[] days = this.daysActive.split("");
+		if(days[now.getDayOfWeek()-1].equals("1")){
+			return true;
+		}		
+		return false;
+	}
+	
 }

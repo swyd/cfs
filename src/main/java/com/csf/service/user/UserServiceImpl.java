@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private TimeSlotUsageDao usageDao;
 
@@ -63,8 +63,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User changePassword(User user, String oldPassword, String newPassword) {
-		//add more validations
-		if(!passwordEncoder.matches(oldPassword, user.getPassword())){
+		// add more validations
+		if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
 			throw new RestException("Old password doesn't match the existing one");
 		}
 		user.setPassword(passwordEncoder.encode(newPassword));
@@ -72,7 +72,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User update(UserTransfer userTransfer, User user) {
+	public User update(UserTransfer userTransfer) {
+		User user = this.find(userTransfer.getId());
+		if (user == null) {
+			throw new RestException("User with given ID not found");
+		}
 		if (userTransfer.getUsername() != null) {
 			user.setUsername(userTransfer.getUsername());
 		}
@@ -113,6 +117,25 @@ public class UserServiceImpl implements UserService {
 		user.setPassword(userTransfer.getPassword());
 
 		return null;
+	}
+
+	@Override
+	public User createUser(User user) {
+		if (user.isAdmin()) {
+//			user.setUserRole();
+		}
+		if (user.getIsActive() == null) {
+			user.setIsActive(false);
+		}
+		if (user.getIsAdvanced() == null) {
+			user.setIsAdvanced(false);
+		}
+		return this.save(user, true);
+	}
+
+	@Override
+	public User changeUserRole(Integer id) {
+		return userDao.changeUserRole(id);
 	}
 
 }
