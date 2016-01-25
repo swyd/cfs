@@ -2,7 +2,12 @@ package com.csf.persistence.entity;
 
 import java.io.Serializable;
 
-//@Entity(name = "csf_user_role")
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity(name = "csf_user_role")
 public class UserRole implements Serializable {
 
 	/**
@@ -10,8 +15,8 @@ public class UserRole implements Serializable {
 	 */
 	private static final long serialVersionUID = 5345851954854298797L;
 
-//	@Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
 	private String role;
@@ -19,7 +24,9 @@ public class UserRole implements Serializable {
 	public UserRole() {
 
 	}
-
+	
+	
+	
 	public Integer getId() {
 		return id;
 	}

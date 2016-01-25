@@ -6,12 +6,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,9 +26,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "csf_user")
 public class User implements Serializable, UserDetails {
 
-	private static final String ROLE_ADMIN = "ADMIN";
-	private static final String ROLE_USER = "USER";
-//	private static final String ROLE_COACH = "COACH";
+	public enum USER_ROLE {
+		ADMIN(1, "ROLE_ADMIN"), USER(2, "ROLE_USER"), COACH(3, "ROLE_COACH");
+
+		private String value;
+		private int key;
+
+		USER_ROLE(int key, String value) {
+			this.key = key;
+			this.value = value;
+			;
+		}
+
+		public int getKey() {
+			return this.key;
+		}
+
+		public String getValue() {
+			return this.value;
+		}
+	}
 
 	/**
 	 * 
@@ -49,8 +69,8 @@ public class User implements Serializable, UserDetails {
 	@Column(name = "sessions_left")
 	private Integer sessionsLeft;
 
-	@JoinColumn(name = "isadmin")
-	private Boolean isAdmin;
+	@Column(name = "role")
+	private Integer role;
 
 	@Column(name = "isactive")
 	private Boolean isActive;
@@ -66,9 +86,13 @@ public class User implements Serializable, UserDetails {
 
 	@Column(name = "isadvanced")
 	private Boolean isAdvanced;
-
-	@OneToMany(mappedBy = "user")
-	private Set<ExcerciseResult> excerciseResults;
+	
+	@ManyToOne(cascade={CascadeType.ALL}, fetch = FetchType.LAZY)
+    @JoinColumn(name="coach")
+	private User coach;
+	
+	@OneToMany(mappedBy="coach", fetch = FetchType.LAZY)
+	private Set<User> trainees;
 
 	public User() {
 		/* Reflection instantiation */
@@ -122,14 +146,6 @@ public class User implements Serializable, UserDetails {
 		this.sessionsLeft = sessionsLeft;
 	}
 
-	public Boolean getIsAdmin() {
-		return isAdmin;
-	}
-
-	public void setIsAdmin(Boolean isAdmin) {
-		this.isAdmin = isAdmin;
-	}
-
 	public Boolean getIsActive() {
 		return isActive;
 	}
@@ -142,21 +158,24 @@ public class User implements Serializable, UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 
-		authorities.add(new SimpleGrantedAuthority(ROLE_USER));
+		authorities.add(new SimpleGrantedAuthority(USER_ROLE.USER.getValue()));
 
-		if (this.isAdmin) {
-			authorities.add(new SimpleGrantedAuthority(ROLE_ADMIN));
+		if (role.equals(USER_ROLE.ADMIN.getKey())) {
+			authorities.add(new SimpleGrantedAuthority(USER_ROLE.ADMIN.getValue()));
 		}
 
-		// if (this.getUserRole().getRole().equals(ROLE_COACH)) {
-		// authorities.add(new SimpleGrantedAuthority(ROLE_ADMIN));
-		// }
+		if (role.equals(USER_ROLE.COACH.getKey())) {
+			authorities.add(new SimpleGrantedAuthority(USER_ROLE.COACH.getValue()));
+		}
 
 		return authorities;
 	}
 
 	public boolean isAdmin() {
-		return isAdmin;
+		if (this.getRole().equals(USER_ROLE.ADMIN.getKey())) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -212,12 +231,28 @@ public class User implements Serializable, UserDetails {
 		this.isAdvanced = isAdvanced;
 	}
 
-	public Set<ExcerciseResult> getExcerciseResults() {
-		return excerciseResults;
+	public Integer getRole() {
+		return role;
 	}
 
-	public void setExcerciseResults(Set<ExcerciseResult> excerciseResults) {
-		this.excerciseResults = excerciseResults;
+	public void setRole(Integer role) {
+		this.role = role;
+	}
+
+	public User getCoach() {
+		return coach;
+	}
+
+	public void setCoach(User coach) {
+		this.coach = coach;
+	}
+
+	public Set<User> getTrainees() {
+		return trainees;
+	}
+
+	public void setTrainees(Set<User> trainees) {
+		this.trainees = trainees;
 	}
 
 }

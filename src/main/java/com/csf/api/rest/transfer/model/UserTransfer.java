@@ -23,6 +23,8 @@ public class UserTransfer {
 
 	private Boolean isAdmin;
 	
+	private Boolean isCoach;
+	
 	private Boolean isAdvanced;
 
 	private Date datePaid;
