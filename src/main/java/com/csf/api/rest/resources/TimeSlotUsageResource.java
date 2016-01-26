@@ -75,7 +75,7 @@ public class TimeSlotUsageResource {
 		return timeSlotUsage;
 	}
 
-	@RequestMapping(path = "/usage/{timeSlotId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON)
+	@RequestMapping(path = "/{timeSlotId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "isAuthenticated()")
 	public StringTransfer cancelSlotUsage(@PathVariable("timeSlotId") Integer timeSlotId) {
 		timeSlotService.deleteUsage(timeSlotId);

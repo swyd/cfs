@@ -180,7 +180,7 @@ public class User implements Serializable, UserDetails {
 	}
 
 	public boolean isAdmin() {
-		if (this.getRole().equals(USER_ROLE.ADMIN.getKey())) {
+		if (this.getRole().equals(USER_ROLE.ADMIN.getValue())) {
 			return true;
 		}
 		return false;
