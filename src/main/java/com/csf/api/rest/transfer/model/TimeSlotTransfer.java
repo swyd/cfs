@@ -8,7 +8,13 @@ public class TimeSlotTransfer {
 	
 	private Integer slotsRemaining;
 	
+	private Boolean isAdvanced;
+	
 	private String startsAt;
+	
+	private Integer coachId;
+
+	private Integer type;
 	
 	public TimeSlotTransfer() {
 
@@ -44,5 +50,29 @@ public class TimeSlotTransfer {
 
 	public void setStartsAt(String startsAt) {
 		this.startsAt = startsAt;
+	}
+
+	public Integer getCoachId() {
+		return coachId;
+	}
+
+	public void setCoachId(Integer coachId) {
+		this.coachId = coachId;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public Boolean getIsAdvanced() {
+		return isAdvanced;
+	}
+
+	public void setIsAdvanced(Boolean isAdvanced) {
+		this.isAdvanced = isAdvanced;
 	}
 }

@@ -76,17 +76,36 @@ public class UserDaoImpl extends JpaDao<User, Integer> implements UserDao {
 	}
 
 	@Override
-	public User changeUserRole(Integer id) {
+	public User changeUserRole(Integer id, Integer userRole) {
 		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
 		final CriteriaUpdate<User> update = builder.createCriteriaUpdate(this.entityClass);
 
 		Root<User> root = update.from(this.entityClass);
 		update.where(builder.equal(root.get("id"), id));
-		
-		update.set(root.<Boolean>get("isAdmin"), root.<Boolean>get("isAdmin"));
+
+		update.set(root.<Integer> get("role"), userRole);
 		this.getEntityManager().createQuery(update).executeUpdate();
-		
+
 		return this.find(id);
+	}
+
+	@Override
+	public List<User> findAllForCoach(Integer id) {
+		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
+		final CriteriaQuery<User> criteriaQuery = builder.createQuery(this.entityClass);
+
+		Root<User> root = criteriaQuery.from(this.entityClass);
+		Path<String> coachIdPath = root.get("coach");
+		criteriaQuery.where(builder.equal(coachIdPath, id));
+
+		TypedQuery<User> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
+		List<User> users = typedQuery.getResultList();
+
+		if (users.isEmpty()) {
+			return null;
+		}
+
+		return users;
 	}
 
 }

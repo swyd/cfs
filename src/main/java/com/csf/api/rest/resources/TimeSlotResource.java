@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.csf.api.rest.transfer.TransferConverterUtil;
 import com.csf.api.rest.transfer.model.StringTransfer;
 import com.csf.api.rest.transfer.model.TimeSlotTransfer;
+import com.csf.persistence.entity.TimeSlot;
 import com.csf.persistence.entity.User;
 import com.csf.service.timeslot.TimeSlotService;
 import com.csf.service.user.UserService;
@@ -35,9 +36,6 @@ public class TimeSlotResource {
 
 	@Autowired
 	private TimeSlotService timeSlotService;
-
-	@Autowired
-	private UserService userService;
 
 	@RequestMapping(path = "/all/remaining", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "isAuthenticated()")
@@ -60,20 +58,20 @@ public class TimeSlotResource {
 	}
 
 	@RequestMapping(path = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
 	public List<TimeSlotTransfer> getAllTimeSlots() {
 		return TransferConverterUtil.convertTimeSlotToTransfer(timeSlotService.findAll());
 	}
 
 	@RequestMapping( method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
 	public TimeSlotTransfer createTimeslot(@RequestBody TimeSlotTransfer timeSlotTransfer) {
-		
-		return null;
+		TimeSlot timeSlot = timeSlotService.save(TransferConverterUtil.convertTimeslotTransferToTimeslot(timeSlotTransfer));
+		return TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
 	}
 
 	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
 	public StringTransfer deleteTimeslot(@PathVariable("id") Integer id) {
 		timeSlotService.delete(id);
 		return new StringTransfer("TimeSlot deleted successfully");

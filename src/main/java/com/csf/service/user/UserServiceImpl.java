@@ -3,6 +3,7 @@ package com.csf.service.user;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +14,7 @@ import com.csf.api.rest.transfer.model.UserTransfer;
 import com.csf.persistance.dao.timeslot.TimeSlotUsageDao;
 import com.csf.persistance.dao.user.UserDao;
 import com.csf.persistence.entity.User;
+import com.csf.persistence.entity.User.USER_ROLE;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,7 +30,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<User> findAll() {
-		return userDao.findAll();
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if(user.getRole().equals(USER_ROLE.COACH.getValue())){
+			return userDao.findAllForCoach(user.getId());
+		}else{
+			return userDao.findAll();
+		}
 	}
 
 	@Override
@@ -90,7 +97,7 @@ public class UserServiceImpl implements UserService {
 			user.setSurname(userTransfer.getSurname());
 		}
 		if (userTransfer.getIsAdmin() != null) {
-			user.setRole(User.USER_ROLE.ADMIN.getKey());;
+			user.setRole(User.USER_ROLE.ADMIN);;
 		}	
 		if (userTransfer.getDatePaid() != null) {
 			user.setDatePaid(userTransfer.getDatePaid());
@@ -122,7 +129,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User createUser(User user) {
 		if (user.isAdmin()) {
-//			user.setUserRole();
+			user.setRole(User.USER_ROLE.ADMIN);
 		}
 		if (user.getIsActive() == null) {
 			user.setIsActive(false);
@@ -134,8 +141,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User changeUserRole(Integer id) {
-		return userDao.changeUserRole(id);
+	public User changeUserRole(Integer id, Integer userRole) {
+		if(USER_ROLE.findRole(userRole)==null){
+			throw new RestException("Role doesn't exist");
+		}
+		
+		return userDao.changeUserRole(id, userRole);
 	}
 
 }

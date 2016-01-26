@@ -29,6 +29,6 @@ public interface UserService {
 
 	User createUser(User user);
 
-	User changeUserRole(Integer id);
+	User changeUserRole(Integer id, Integer userRole);
 
 }

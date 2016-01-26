@@ -29,8 +29,8 @@ public class TransferConverterUtil {
 
 	public static UserTransfer convertUserToTransfer(User user) {
 		return new UserTransfer(user.getId(), user.getEmail(), user.getName(), user.getSurname(), user.getUsername(),
-				user.getSessionsLeft(), user.getIsActive(), user.getIsAdvanced(), user.getDatePaid(), user.getDateExpiring(),
-				createRoleMap(user.getAuthorities()));
+				user.getSessionsLeft(), user.getIsActive(), user.getIsAdvanced(), user.getDatePaid(),
+				user.getDateExpiring(), createRoleMap(user.getAuthorities()));
 	}
 
 	private static Map<String, Boolean> createRoleMap(Collection<? extends GrantedAuthority> collection) {
@@ -67,14 +67,6 @@ public class TransferConverterUtil {
 		}
 
 		return timeSlotsTransfer;
-	}
-
-	public static TimeSlotTransfer convertTimeSlotToTransfer(TimeSlot timeSlot) {
-		TimeSlotTransfer timeSlotTransfer = new TimeSlotTransfer();
-		timeSlotTransfer.setId(timeSlot.getId());
-		timeSlotTransfer.setLimit(timeSlot.getLimit());
-		timeSlotTransfer.setStartsAt(timeSlot.getStartsAt());
-		return timeSlotTransfer;
 	}
 
 	// public static TimeSlotTransfer convertToPacketTransfer(TimeSlotUsage
@@ -120,5 +112,25 @@ public class TransferConverterUtil {
 	public static TimeSlotUsageTransfer convertContractUsageToTransfer(TimeSlot contractsUsage) {
 		// TODO implement logic
 		return new TimeSlotUsageTransfer();
+	}
+
+	public static TimeSlot convertTimeslotTransferToTimeslot(TimeSlotTransfer transfer) {
+		TimeSlot timeslot = new TimeSlot();
+		// timeslot.setCoach(userSertransfer.getCoachId());
+		timeslot.setIsAdvanced(transfer.getIsAdvanced());
+		timeslot.setStartsAt(transfer.getStartsAt());
+		timeslot.setLimit(transfer.getLimit());
+		timeslot.setType(transfer.getType());
+		return timeslot;
+	}
+
+	public static TimeSlotTransfer convertTimeSlotToTransfer(TimeSlot timeSlot) {
+		TimeSlotTransfer timeSlotTransfer = new TimeSlotTransfer();
+		timeSlotTransfer.setId(timeSlot.getId());
+		timeSlotTransfer.setLimit(timeSlot.getLimit());
+		timeSlotTransfer.setStartsAt(timeSlot.getStartsAt());
+		timeSlotTransfer.setCoachId(timeSlot.getCoach().getId());
+		timeSlotTransfer.setType(timeSlot.getType());
+		return timeSlotTransfer;
 	}
 }

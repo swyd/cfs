@@ -54,10 +54,9 @@ public class UserResource {
 	 * @return A list of all users with their details
 	 */
 	@RequestMapping(path = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
 	public List<UserTransfer> getAllUsers() {
 		List<User> users = userService.findAll();
-
 		return TransferConverterUtil.convertAllUsersToTransfer(users);
 	}
 
@@ -67,7 +66,7 @@ public class UserResource {
 	 * @return A transfer containing the username and the roles.
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
 	public UserTransfer createUser(@RequestBody User user) {
 		User savedUser = userService.createUser(user);
 
@@ -76,9 +75,9 @@ public class UserResource {
 	}
 
 	@RequestMapping(path = "/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
-	public UserTransfer changeUserRole(@PathVariable("id") Integer id) {
-		User user = userService.changeUserRole(id);
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
+	public UserTransfer changeUserRole(@PathVariable("id") Integer id, Integer userRole) {
+		User user = userService.changeUserRole(id, userRole);
 		return TransferConverterUtil.convertUserToTransfer(user);
 	}
 
@@ -113,7 +112,7 @@ public class UserResource {
 	 * @return A transfer containing the username and the roles.
 	 */
 	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON)
-	@PreAuthorize(value = "hasRole('ROLE_ADMIN')")
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
 	public StringTransfer deleteUser(@PathVariable("id") Integer id) {
 		userService.delete(id);
 

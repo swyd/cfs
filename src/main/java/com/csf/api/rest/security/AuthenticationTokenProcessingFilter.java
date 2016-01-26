@@ -8,12 +8,19 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.filter.GenericFilterBean;
+
+import com.csf.api.rest.transfer.model.ErrorDetailTransfer;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
@@ -34,9 +41,8 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 		String userName = TokenUtils.getUserNameFromToken(authToken);
 
 		if (userName != null) {
-
-			UserDetails userDetails = this.userService.loadUserByUsername(userName);
-
+			UserDetails userDetails = null;
+			userDetails = this.userService.loadUserByUsername(userName);
 			if (TokenUtils.validateToken(authToken, userDetails)) {
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 				if (authentication == null) {

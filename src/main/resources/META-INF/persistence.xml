@@ -7,5 +7,6 @@
         <class>com.csf.persistence.entity.User</class>
         <class>com.csf.persistence.entity.TimeSlotUsage</class>
         <class>com.csf.persistence.entity.TimeSlot</class>
+        <class>com.csf.persistence.entity.UserRole</class>
     </persistence-unit>
 </persistence>

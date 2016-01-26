@@ -12,8 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.joda.time.DateTime;
-
 @Entity
 @Table(name = "csf_time_slot")
 public class TimeSlot implements Serializable {
@@ -48,14 +46,11 @@ public class TimeSlot implements Serializable {
 	private String startsAt;
 
 	private Integer limit;
-
+	
 	@Column(name = "isadvanced")
 	private Boolean isAdvanced;
 
-	@Column(name = "active_on_days")
-	private String daysActive;
-
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "coach_id")
 	private User coach;
 
@@ -92,22 +87,6 @@ public class TimeSlot implements Serializable {
 
 	public void setIsAdvanced(Boolean isAdvanced) {
 		this.isAdvanced = isAdvanced;
-	}
-
-	public String getDaysActive() {
-		return daysActive;
-	}
-
-	public void setDaysActive(String daysActive) {
-		this.daysActive = daysActive;
-	}
-
-	public boolean isActiveForDate(DateTime now) {
-		String[] days = this.daysActive.split("");
-		if (days[now.getDayOfWeek() - 1].equals("1")) {
-			return true;
-		}
-		return false;
 	}
 
 	public User getCoach() {

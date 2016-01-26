@@ -45,6 +45,14 @@ public class User implements Serializable, UserDetails {
 		public String getValue() {
 			return this.value;
 		}
+
+		public static String findRole(int value) {
+			for (USER_ROLE role : USER_ROLE.values()) {
+				if (role.getKey() == value)
+					return role.getValue();
+			}
+			return null;
+		}
 	}
 
 	/**
@@ -86,13 +94,13 @@ public class User implements Serializable, UserDetails {
 
 	@Column(name = "isadvanced")
 	private Boolean isAdvanced;
-	
-	@ManyToOne(cascade={CascadeType.ALL}, fetch = FetchType.LAZY)
-    @JoinColumn(name="coach")
+
+	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@JoinColumn(name = "coach")
 	private User coach;
-	
-	@OneToMany(mappedBy="coach", fetch = FetchType.LAZY)
-	private Set<User> trainees;
+
+//	@OneToMany(mappedBy = "coach", fetch = FetchType.LAZY)
+//	private Set<User> trainees;
 
 	public User() {
 		/* Reflection instantiation */
@@ -231,12 +239,12 @@ public class User implements Serializable, UserDetails {
 		this.isAdvanced = isAdvanced;
 	}
 
-	public Integer getRole() {
-		return role;
+	public String getRole() {
+		return USER_ROLE.findRole(this.role);
 	}
 
-	public void setRole(Integer role) {
-		this.role = role;
+	public void setRole(USER_ROLE role) {
+		this.role = role.getKey();
 	}
 
 	public User getCoach() {
@@ -247,12 +255,12 @@ public class User implements Serializable, UserDetails {
 		this.coach = coach;
 	}
 
-	public Set<User> getTrainees() {
-		return trainees;
-	}
-
-	public void setTrainees(Set<User> trainees) {
-		this.trainees = trainees;
-	}
+//	public Set<User> getTrainees() {
+//		return trainees;
+//	}
+//
+//	public void setTrainees(Set<User> trainees) {
+//		this.trainees = trainees;
+//	}
 
 }
