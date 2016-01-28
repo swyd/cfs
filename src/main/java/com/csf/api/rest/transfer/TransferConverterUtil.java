@@ -116,13 +116,16 @@ public class TransferConverterUtil {
 		return new TimeSlotUsageTransfer();
 	}
 
-	public static TimeSlot convertTimeslotTransferToTimeslot(TimeSlotTransfer transfer) {
+	public static TimeSlot convertTimeslotTransferToTimeslot(TimeSlotTransfer transfer, User coach) {
 		TimeSlot timeslot = new TimeSlot();
-		// timeslot.setCoach(userSertransfer.getCoachId());
+		timeslot.setId(transfer.getId());
+		timeslot.setCoach(coach);
 		timeslot.setIsAdvanced(transfer.getIsAdvanced());
 		timeslot.setStartsAt(transfer.getStartsAt());
 		timeslot.setLimit(transfer.getLimit());
 		timeslot.setType(transfer.getType());
+		timeslot.setIsActive(transfer.getIsActive());
+		timeslot.setPriority(transfer.getPriority());
 		return timeslot;
 	}
 

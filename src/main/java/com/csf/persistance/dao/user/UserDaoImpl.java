@@ -117,7 +117,7 @@ public class UserDaoImpl extends JpaDao<User, Integer> implements UserDao {
 
 		Root<User> root = criteriaQuery.from(this.entityClass);
 		Path<String> rolePath = root.get("role");
-		criteriaQuery.where(builder.equal(rolePath, USER_ROLE.COACH.getKey()));
+		criteriaQuery.where(builder.notEqual(rolePath, USER_ROLE.USER.getKey()));
 
 		TypedQuery<User> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
 		List<User> users = typedQuery.getResultList();

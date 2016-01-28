@@ -49,7 +49,8 @@ public class TimeSlot implements Serializable {
 
 	@Column(name = "starts_at")
 	private String startsAt;
-
+	
+	@Column(name = "timeslot_limit")
 	private Integer limit;
 
 	@Column(name = "isadvanced")
@@ -65,6 +66,7 @@ public class TimeSlot implements Serializable {
 	@Column(name = "isactive")
 	private Boolean isActive;
 
+	@Column(name = "priority")
 	private Integer priority;
 
 	public Integer getId() {
