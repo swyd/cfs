@@ -14,6 +14,7 @@ import com.csf.api.rest.transfer.model.TimeSlotUsageTransfer;
 import com.csf.api.rest.transfer.model.UserTransfer;
 import com.csf.persistence.entity.News;
 import com.csf.persistence.entity.TimeSlot;
+import com.csf.persistence.entity.TimeSlot.TIME_SLOT_TYPE;
 import com.csf.persistence.entity.User;
 
 public class TransferConverterUtil {
@@ -30,7 +31,8 @@ public class TransferConverterUtil {
 	public static UserTransfer convertUserToTransfer(User user) {
 		return new UserTransfer(user.getId(), user.getEmail(), user.getName(), user.getSurname(), user.getUsername(),
 				user.getSessionsLeft(), user.getIsActive(), user.getIsAdvanced(), user.getDatePaid(),
-				user.getDateExpiring(), createRoleMap(user.getAuthorities()));
+				user.getDateExpiring(), (user.getCoach() != null) ? user.getCoach().getId() : null,
+				createRoleMap(user.getAuthorities()));
 	}
 
 	private static Map<String, Boolean> createRoleMap(Collection<? extends GrantedAuthority> collection) {
@@ -131,6 +133,26 @@ public class TransferConverterUtil {
 		timeSlotTransfer.setStartsAt(timeSlot.getStartsAt());
 		timeSlotTransfer.setCoachId(timeSlot.getCoach().getId());
 		timeSlotTransfer.setType(timeSlot.getType());
+		timeSlotTransfer.setPriority(timeSlot.getPriority());
+		timeSlotTransfer.setIsActive(timeSlot.getIsActive());
+		timeSlotTransfer.setIsAdvanced(timeSlot.getIsAdvanced());
 		return timeSlotTransfer;
+	}
+
+	public static Map<Integer, String> convertTimeSlotTypesToTransfer() {
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		for (TIME_SLOT_TYPE type : TIME_SLOT_TYPE.values()) {
+			map.put(type.getKey(), type.getDescription());
+		}
+		return map;
+	}
+
+	public static Map<Integer, String> convertCoachesToMap(List<User> coaches) {
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		for (User user : coaches) {
+			String fullName = user.getName() + " " + user.getSurname();
+			map.put(user.getId(), fullName);
+		}
+		return map;
 	}
 }

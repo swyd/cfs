@@ -12,19 +12,21 @@ public class UserTransfer {
 	private String name;
 
 	private String surname;
-	
+
 	private String username;
 
 	private String password;
 
 	private Integer sessionsLeft;
 
+	private Integer coachId;
+
 	private Boolean isActive;
 
 	private Boolean isAdmin;
-	
+
 	private Boolean isCoach;
-	
+
 	private Boolean isAdvanced;
 
 	private Date datePaid;
@@ -37,8 +39,9 @@ public class UserTransfer {
 
 	}
 
-	public UserTransfer(Integer id,  String email, String name, String surname, String username, Integer sessionsLeft, Boolean isActive, Boolean isAdvanced, Date datePaid, Date dateExpiring,
-			 Map<String, Boolean> roles) {
+	public UserTransfer(Integer id, String email, String name, String surname, String username, Integer sessionsLeft,
+			Boolean isActive, Boolean isAdvanced, Date datePaid, Date dateExpiring, Integer coachId,
+			Map<String, Boolean> roles) {
 		this.id = id;
 		this.email = email;
 		this.name = name;
@@ -50,11 +53,18 @@ public class UserTransfer {
 		this.dateExpiring = dateExpiring;
 		this.datePaid = datePaid;
 		this.roles = roles;
+		this.coachId = coachId;
 
 		if (roles.containsKey("ROLE_ADMIN")) {
 			this.isAdmin = true;
 		} else {
 			this.isAdmin = false;
+		}
+
+		if (roles.containsKey("ROLE_COACH")) {
+			this.setIsCoach(true);
+		} else {
+			this.setIsCoach(false);
 		}
 
 	}
@@ -161,6 +171,22 @@ public class UserTransfer {
 
 	public void setIsAdvanced(Boolean isAdvanced) {
 		this.isAdvanced = isAdvanced;
+	}
+
+	public Boolean getIsCoach() {
+		return isCoach;
+	}
+
+	public void setIsCoach(Boolean isCoach) {
+		this.isCoach = isCoach;
+	}
+
+	public Integer getCoachId() {
+		return coachId;
+	}
+
+	public void setCoachId(Integer coachId) {
+		this.coachId = coachId;
 	}
 
 }

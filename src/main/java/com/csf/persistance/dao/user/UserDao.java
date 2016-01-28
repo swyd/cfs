@@ -18,4 +18,6 @@ public interface UserDao extends GenericDao<User, Integer>, UserDetailsService {
 	
 	List<User> findAllForCoach(Integer id);
 
+	List<User> findAllCoaches();
+
 }

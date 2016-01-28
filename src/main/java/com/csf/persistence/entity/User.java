@@ -15,7 +15,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements Serializable, UserDetails {
 
 	public enum USER_ROLE {
-		ADMIN(1, "ROLE_ADMIN"), USER(2, "ROLE_USER"), COACH(3, "ROLE_COACH");
+		ADMIN(1, "ROLE_ADMIN"), COACH(2, "ROLE_COACH"), USER(3, "ROLE_USER");
 
 		private String value;
 		private int key;

@@ -1,5 +1,6 @@
 package com.csf.persistance.dao.user;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.csf.persistance.dao.JpaDao;
 import com.csf.persistence.entity.User;
+import com.csf.persistence.entity.User.USER_ROLE;
 
 @Repository("userDao")
 public class UserDaoImpl extends JpaDao<User, Integer> implements UserDao {
@@ -104,6 +106,21 @@ public class UserDaoImpl extends JpaDao<User, Integer> implements UserDao {
 		if (users.isEmpty()) {
 			return null;
 		}
+
+		return users;
+	}
+
+	@Override
+	public List<User> findAllCoaches() {
+		final CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
+		final CriteriaQuery<User> criteriaQuery = builder.createQuery(this.entityClass);
+
+		Root<User> root = criteriaQuery.from(this.entityClass);
+		Path<String> rolePath = root.get("role");
+		criteriaQuery.where(builder.equal(rolePath, USER_ROLE.COACH.getKey()));
+
+		TypedQuery<User> typedQuery = this.getEntityManager().createQuery(criteriaQuery);
+		List<User> users = typedQuery.getResultList();
 
 		return users;
 	}

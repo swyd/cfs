@@ -10,6 +10,8 @@ import com.csf.persistence.entity.User;
 public interface UserService {
 
 	List<User> findAll();
+	
+	List<User> findAllCoaches();
 
 	User find(Integer id);
 

@@ -3,6 +3,7 @@ package com.csf.api.rest.resources;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
@@ -26,7 +27,6 @@ import com.csf.api.rest.transfer.model.TimeSlotTransfer;
 import com.csf.persistence.entity.TimeSlot;
 import com.csf.persistence.entity.User;
 import com.csf.service.timeslot.TimeSlotService;
-import com.csf.service.user.UserService;
 
 @RestController
 @RequestMapping("/timeslot")
@@ -63,9 +63,22 @@ public class TimeSlotResource {
 		return TransferConverterUtil.convertTimeSlotToTransfer(timeSlotService.findAll());
 	}
 
+	@RequestMapping(path = "/types", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
+	public Map<Integer, String> getTimeSlotTypes() {
+		return TransferConverterUtil.convertTimeSlotTypesToTransfer();
+	}
+	
 	@RequestMapping( method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
 	public TimeSlotTransfer createTimeslot(@RequestBody TimeSlotTransfer timeSlotTransfer) {
+		TimeSlot timeSlot = timeSlotService.save(TransferConverterUtil.convertTimeslotTransferToTimeslot(timeSlotTransfer));
+		return TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
+	}
+	
+	@RequestMapping( method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON)
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
+	public TimeSlotTransfer updateTimeslot(@RequestBody TimeSlotTransfer timeSlotTransfer) {
 		TimeSlot timeSlot = timeSlotService.save(TransferConverterUtil.convertTimeslotTransferToTimeslot(timeSlotTransfer));
 		return TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
 	}

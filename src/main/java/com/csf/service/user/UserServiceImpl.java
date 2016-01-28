@@ -149,4 +149,9 @@ public class UserServiceImpl implements UserService {
 		return userDao.changeUserRole(id, userRole);
 	}
 
+	@Override
+	public List<User> findAllCoaches() {
+		return userDao.findAllCoaches();
+	}
+
 }

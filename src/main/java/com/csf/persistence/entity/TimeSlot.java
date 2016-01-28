@@ -17,19 +17,24 @@ import javax.persistence.Table;
 public class TimeSlot implements Serializable {
 
 	private static final long serialVersionUID = 6848596770479221825L;
-	//TODO FIX SO THAT GET/SET RETURN ENUMS
+
 	public enum TIME_SLOT_TYPE {
-		WEEKDAY(1), HOLIDAY(2), WEEKEND(3);
+		WEEKDAY(1, "Radni dan"), HOLIDAY(2, "Praznik"), SATURDAY(3, "Subota"), SUNDAY(4, "Nedelja");
 
 		private int key;
+		private String description;
 
-		TIME_SLOT_TYPE(int key) {
+		TIME_SLOT_TYPE(int key, String description) {
 			this.key = key;
-			;
+			this.description = description;
 		}
 
 		public int getKey() {
 			return this.key;
+		}
+
+		public String getDescription() {
+			return this.description;
 		}
 
 	}
@@ -46,7 +51,7 @@ public class TimeSlot implements Serializable {
 	private String startsAt;
 
 	private Integer limit;
-	
+
 	@Column(name = "isadvanced")
 	private Boolean isAdvanced;
 
@@ -56,6 +61,11 @@ public class TimeSlot implements Serializable {
 
 	@Column(name = "type")
 	private Integer type;
+
+	@Column(name = "isactive")
+	private Boolean isActive;
+
+	private Integer priority;
 
 	public Integer getId() {
 		return id;
@@ -103,6 +113,22 @@ public class TimeSlot implements Serializable {
 
 	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 
 }

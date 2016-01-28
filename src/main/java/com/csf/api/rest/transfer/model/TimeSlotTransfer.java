@@ -10,11 +10,16 @@ public class TimeSlotTransfer {
 	
 	private Boolean isAdvanced;
 	
+	private Boolean isActive;
+	
 	private String startsAt;
 	
 	private Integer coachId;
 
 	private Integer type;
+	
+	private Integer priority;
+
 	
 	public TimeSlotTransfer() {
 
@@ -74,5 +79,21 @@ public class TimeSlotTransfer {
 
 	public void setIsAdvanced(Boolean isAdvanced) {
 		this.isAdvanced = isAdvanced;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 }

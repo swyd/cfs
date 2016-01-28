@@ -1,6 +1,7 @@
 package com.csf.api.rest.resources;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
@@ -59,7 +60,18 @@ public class UserResource {
 		List<User> users = userService.findAll();
 		return TransferConverterUtil.convertAllUsersToTransfer(users);
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@RequestMapping(path = "/coaches", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
+	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
+	public Map<Integer, String> getCoaches() {
+		List<User> coaches = userService.findAllCoaches();
+		return TransferConverterUtil.convertCoachesToMap(coaches);
+	}
+	
 	/**
 	 * Creates a new user.
 	 * 
@@ -71,7 +83,6 @@ public class UserResource {
 		User savedUser = userService.createUser(user);
 
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
-
 	}
 
 	@RequestMapping(path = "/{id}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON)
@@ -118,5 +129,7 @@ public class UserResource {
 
 		return new StringTransfer("User deleted successfully");
 	}
+	
+	
 
 }
