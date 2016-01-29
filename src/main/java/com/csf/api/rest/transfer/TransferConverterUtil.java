@@ -15,6 +15,7 @@ import com.csf.api.rest.transfer.model.UserTransfer;
 import com.csf.persistence.entity.News;
 import com.csf.persistence.entity.TimeSlot;
 import com.csf.persistence.entity.TimeSlot.TIME_SLOT_TYPE;
+import com.csf.persistence.entity.User.USER_ROLE;
 import com.csf.persistence.entity.User;
 
 public class TransferConverterUtil {
@@ -33,6 +34,36 @@ public class TransferConverterUtil {
 				user.getSessionsLeft(), user.getIsActive(), user.getIsAdvanced(), user.getDatePaid(),
 				user.getDateExpiring(), (user.getCoach() != null) ? user.getCoach().getId() : null,
 				createRoleMap(user.getAuthorities()));
+	}
+
+	public static User convertUserTransferToUser(UserTransfer userTransfer, User coach) {
+		User user = new User();
+		user.setCoach(coach);
+		user.setUsername(userTransfer.getUsername());
+		user.setName(userTransfer.getName());
+		user.setSurname(userTransfer.getSurname());
+		user.setDatePaid(userTransfer.getDatePaid());
+		user.setDateExpiring(userTransfer.getDateExpiring());
+		user.setPassword(userTransfer.getPassword());
+		user.setEmail(userTransfer.getEmail());
+		user.setSessionsLeft(userTransfer.getSessionsLeft());
+		if (userTransfer.getIsActive() != null) {
+			user.setIsActive(userTransfer.getIsActive());
+		} else {
+			user.setIsActive(false);
+		}
+		if (userTransfer.getIsAdmin() != null) {
+			user.setRole(User.USER_ROLE.ADMIN);
+		} else {
+			user.setRole(USER_ROLE.USER);
+		}
+		if (userTransfer.getIsAdvanced() != null) {
+			user.setIsAdvanced(userTransfer.getIsAdvanced());
+		} else {
+			user.setIsAdvanced(false);
+		}
+
+		return user;
 	}
 
 	private static Map<String, Boolean> createRoleMap(Collection<? extends GrantedAuthority> collection) {

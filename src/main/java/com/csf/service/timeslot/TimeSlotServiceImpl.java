@@ -18,6 +18,7 @@ import com.csf.persistance.dao.timeslot.TimeSlotDao;
 import com.csf.persistance.dao.timeslot.TimeSlotUsageDao;
 import com.csf.persistance.dao.user.UserDao;
 import com.csf.persistence.entity.TimeSlot;
+import com.csf.persistence.entity.TimeSlot.TIME_SLOT_TYPE;
 import com.csf.persistence.entity.TimeSlotUsage;
 import com.csf.persistence.entity.User;
 
@@ -45,6 +46,11 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 	@Override
 	public TimeSlot save(TimeSlot timeSlot) {
+		// check if timeslot like this already exists
+		if (timeSlot.getId() == null && timeSlotDao.checkIfExists(timeSlot.getType(), timeSlot.getStartsAt())) {
+			throw new RestException(
+					"Vec postoji Trening u terminu: " + timeSlot.getStartsAt() + "h, tipa: " + timeSlot.getType());
+		}
 		return timeSlotDao.save(timeSlot);
 	}
 
@@ -67,7 +73,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		}
 
 		timeSlotUsageDao.delete(id);
-			
+
 		if (usage.getUser().getId() != user.getId()) {
 			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
 			userDao.save(usage.getUser());
@@ -110,18 +116,13 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		Map<String, Integer> remainingMap = new HashMap<String, Integer>();
 		Boolean isAdvanced = user.getIsAdvanced();
-
-		for (TimeSlot timeSlot : timeSlotDao.findAll()) {
+		//TODO implement check for trainer
+		for (TimeSlot timeSlot : timeSlotDao
+				.findAllActiveForType(TIME_SLOT_TYPE.findType(new DateTime(date).getDayOfWeek()))) {
 			if (isAdvanced && timeSlot.getIsAdvanced()) {
 				timeSlots.add(timeSlot);
 			} else if (!isAdvanced && !timeSlot.getIsAdvanced()) {
-				if (new DateTime(date).getDayOfWeek() == 6) {
-					if (Integer.parseInt(timeSlot.getStartsAt()) < 19) {
-						timeSlots.add(timeSlot);
-					}
-				} else {
-					timeSlots.add(timeSlot);
-				}
+				timeSlots.add(timeSlot);
 			}
 		}
 
@@ -152,43 +153,62 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 				timeSlotTransfers.add(timeSlotTransfer);
 			}
 		} else {
-			Boolean openFive = checkIfAllAreBooked(remainingMap);
-			if (openFive) {
-				for (TimeSlot timeSlot : timeSlots) {
+			// Make algorithm and take into account priority of opening slots
+			boolean openNextPrio = true;
+			for (int i = 0; i < timeSlots.size(); i++) {
+				TimeSlot timeSlot = timeSlots.get(i);
+
+				if (i > 0) {
+					// check second
+					if (timeSlot.getPriority() == timeSlots.get(i - 1).getPriority()) {
+						TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
+						Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
+						if (slotsRemaining > 0) {
+							openNextPrio = false;
+						}
+						timeSlotTransfer.setSlotsRemaining(slotsRemaining);
+						timeSlotTransfers.add(timeSlotTransfer);
+					} else {
+						if (openNextPrio) {
+							TimeSlotTransfer timeSlotTransfer = TransferConverterUtil
+									.convertTimeSlotToTransfer(timeSlot);
+							Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
+							if (slotsRemaining > 0) {
+								openNextPrio = false;
+							}
+							timeSlotTransfer.setSlotsRemaining(slotsRemaining);
+							timeSlotTransfers.add(timeSlotTransfer);
+						}
+					}
+				} else {
+					// Add first
 					TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
-					timeSlotTransfer.setSlotsRemaining(remainingMap.get(timeSlot.getStartsAt()));
+					Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
+					if (slotsRemaining > 0) {
+						openNextPrio = false;
+					}
+					timeSlotTransfer.setSlotsRemaining(slotsRemaining);
 					timeSlotTransfers.add(timeSlotTransfer);
 				}
-			} else {
-				for (TimeSlot timeSlot : timeSlots) {
-					if (!timeSlot.getStartsAt().equals("17")) {
-						TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
-						timeSlotTransfer.setSlotsRemaining(remainingMap.get(timeSlot.getStartsAt()));
-						timeSlotTransfers.add(timeSlotTransfer);
-					}
-				}
-			}
 
+			}
 		}
 
 		return timeSlotTransfers;
 
 	}
 
-	private Boolean checkIfAllAreBooked(Map<String, Integer> map) {
-		if (map.containsKey("17") && map.get("17") > 0) {
-			return true;
-		}
-		for (String key : map.keySet()) {
-			if (!key.equals("17")) {
-				if (map.get(key) > 0) {
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
+	// private Boolean checkIfAllBeforeAreFull(Integer iterator, TimeSlot
+	// timeSlots, Map<String, Integer> map) {
+	// TimeSlotTransfer timeSlotTransfer =
+	// TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
+	// Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
+	// if (slotsRemaining > 0) {
+	// openNextPrio = false;
+	// }
+	// timeSlotTransfer.setSlotsRemaining(slotsRemaining);
+	// timeSlotTransfers.add(timeSlotTransfer);
+	// }
 
 	@Override
 	public TimeSlotUsage create(User user, Integer timeSlotId, Date forDate) {

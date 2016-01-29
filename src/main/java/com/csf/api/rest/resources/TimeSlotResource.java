@@ -1,13 +1,11 @@
 package com.csf.api.rest.resources;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +48,6 @@ public class TimeSlotResource {
 
 		if (forDate == null) {
 			forDate = new Date();
-		}
-
-		if (new DateTime(forDate).getDayOfWeek() == 7) {
-			return new ArrayList<TimeSlotTransfer>();
 		}
 
 		List<TimeSlotTransfer> timeSlots = timeSlotService.findAllWithRemainingForDate(user, forDate);

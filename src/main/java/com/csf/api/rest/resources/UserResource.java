@@ -60,7 +60,7 @@ public class UserResource {
 		List<User> users = userService.findAll();
 		return TransferConverterUtil.convertAllUsersToTransfer(users);
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -71,7 +71,7 @@ public class UserResource {
 		List<User> coaches = userService.findAllCoaches();
 		return TransferConverterUtil.convertCoachesToMap(coaches);
 	}
-	
+
 	/**
 	 * Creates a new user.
 	 * 
@@ -79,8 +79,15 @@ public class UserResource {
 	 */
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "hasRole('ROLE_ADMIN') || hasRole('ROLE_COACH')")
-	public UserTransfer createUser(@RequestBody User user) {
-		User savedUser = userService.createUser(user);
+	public UserTransfer createUser(@RequestBody UserTransfer user) {
+		User coach = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		if (user.getCoachId() != null) {
+			coach = userService.find(user.getCoachId());
+		}
+		if (coach == null) {
+			throw new RestException("Ne postoji izabrani trener");
+		}
+		User savedUser = userService.createUser(TransferConverterUtil.convertUserTransferToUser(user, coach));
 
 		return TransferConverterUtil.convertUserToTransfer(savedUser);
 	}
@@ -129,7 +136,5 @@ public class UserResource {
 
 		return new StringTransfer("User deleted successfully");
 	}
-	
-	
 
 }

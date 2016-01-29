@@ -114,6 +114,11 @@ public class UserServiceImpl implements UserService {
 		if (userTransfer.getSessionsLeft() != null) {
 			user.setSessionsLeft(userTransfer.getSessionsLeft());
 		}
+		if (userTransfer.getIsAdvanced() != null) {
+			user.setIsAdvanced(userTransfer.getIsAdvanced());
+		}else{
+			user.setIsAdvanced(false);
+		}
 		user.setId(userTransfer.getId());
 		return userDao.save(user);
 	}

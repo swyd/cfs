@@ -19,7 +19,7 @@ public class TimeSlot implements Serializable {
 	private static final long serialVersionUID = 6848596770479221825L;
 
 	public enum TIME_SLOT_TYPE {
-		WEEKDAY(1, "Radni dan"), HOLIDAY(2, "Praznik"), SATURDAY(3, "Subota"), SUNDAY(4, "Nedelja");
+		WEEKDAY(1, "Radni dan"), SATURDAY(2, "Subota"), SUNDAY(3, "Nedelja");
 
 		private int key;
 		private String description;
@@ -37,6 +37,15 @@ public class TimeSlot implements Serializable {
 			return this.description;
 		}
 
+		public static Integer findType(int dayOfWeek) {
+			if (dayOfWeek <= 5) {
+				return WEEKDAY.getKey();
+			} else if (dayOfWeek == 6) {
+				return SATURDAY.getKey();
+			} else {
+				return SUNDAY.getKey();
+			}
+		}
 	}
 
 	public TimeSlot() {
@@ -49,7 +58,7 @@ public class TimeSlot implements Serializable {
 
 	@Column(name = "starts_at")
 	private String startsAt;
-	
+
 	@Column(name = "timeslot_limit")
 	private Integer limit;
 
