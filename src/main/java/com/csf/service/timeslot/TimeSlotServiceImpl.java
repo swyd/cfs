@@ -169,7 +169,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 						timeSlotTransfer.setSlotsRemaining(slotsRemaining);
 						timeSlotTransfers.add(timeSlotTransfer);
 					} else {
-						if (openNextPrio) {
+						if (remainingMap.get(timeSlot.getStartsAt()) < 14 || openNextPrio) {
 							TimeSlotTransfer timeSlotTransfer = TransferConverterUtil
 									.convertTimeSlotToTransfer(timeSlot);
 							Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
