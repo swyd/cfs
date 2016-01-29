@@ -97,7 +97,11 @@ public class UserServiceImpl implements UserService {
 			user.setSurname(userTransfer.getSurname());
 		}
 		if (userTransfer.getIsAdmin() != null) {
-			user.setRole(User.USER_ROLE.ADMIN);;
+			if(userTransfer.getIsAdmin()){
+				user.setRole(User.USER_ROLE.ADMIN);
+			}else{
+				user.setRole(User.USER_ROLE.USER);
+			}
 		}	
 		if (userTransfer.getDatePaid() != null) {
 			user.setDatePaid(userTransfer.getDatePaid());
