@@ -65,7 +65,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 		TimeSlotUsage usage = findTimeSlotUsage(id);
 
-		if (!user.isAdmin() && usage.getUser().getId() != user.getId()) {
+		if (!user.isAdmin() && !usage.getUser().getId().equals(user.getId())) {
 			throw new RestException("Ne mozete otkazati trening ako ga niste vi zakazali.");
 		}
 		if (!user.isAdmin() && isTodayOrLater(usage.getUsageDate())) {
@@ -74,11 +74,11 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 		timeSlotUsageDao.delete(id);
 
-		if (usage.getUser().getId() != user.getId()) {
+		if (!usage.getUser().getId().equals(user.getId())) {
 			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
 			userDao.save(usage.getUser());
 		} else {
-			user.setSessionsLeft(usage.getUser().getSessionsLeft() + 1);
+			user.setSessionsLeft(user.getSessionsLeft() + 1);
 			userDao.save(user);
 		}
 	}
@@ -116,7 +116,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
 		Map<String, Integer> remainingMap = new HashMap<String, Integer>();
 		Boolean isAdvanced = user.getIsAdvanced();
-		//TODO implement check for trainer
+		// TODO implement check for trainer
 		for (TimeSlot timeSlot : timeSlotDao
 				.findAllActiveForType(TIME_SLOT_TYPE.findType(new DateTime(date).getDayOfWeek()))) {
 			if (isAdvanced && timeSlot.getIsAdvanced()) {
