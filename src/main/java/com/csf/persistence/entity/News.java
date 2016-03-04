@@ -14,30 +14,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-// @NamedQueries({
-// @NamedQuery(name = "Contract.findAllForUser", query = "SELECT c FROM Contract
-// c WHERE c.user.id = :id "),
-// @NamedQuery(name = "Contract.findAllForUserDates", query = "SELECT c FROM
-// Contract c WHERE c.user.id = :id "
-// + "AND c.creationDate >= :fromDate AND c.creationDate <= :toDate AND c.name
-// LIKE :name AND c.licencePlate "
-// + "LIKE :licencePlate AND (:packetId IS NULL OR c.packet.id = :packetId)"),
-// @NamedQuery(name = "Contract.findAll", query = "SELECT c FROM Contract c
-// WHERE c.creationDate >="
-// + " :fromDate AND c.creationDate <= :toDate AND c.name LIKE :name AND
-// c.licencePlate "
-// + "LIKE :licencePlate AND (:packetId IS NULL OR c.packet.id = :packetId )"),
-// @NamedQuery(name = "Contract.searchForContracts", query = "SELECT c FROM
-// Contract c WHERE c.creationDate >="
-// + " :fromDate AND c.creationDate <= :toDate AND c.name LIKE :name"
-// + " AND c.licencePlate LIKE :licencePlate AND (:id IS NULL OR c.id = :id) AND
-// c.active = :active"),
-// @NamedQuery(name = "Contract.searchForUserContracts", query = "SELECT c FROM
-// Contract c WHERE c.creationDate >="
-// + " :fromDate AND c.creationDate <= :toDate AND c.name LIKE :name AND
-// c.user.id = :userId"
-// + " AND c.licencePlate LIKE :licencePlate AND (:id IS NULL OR c.id = :id) AND
-// c.active = :active") })// AND c.active = :active
 @Table(name = "csf_news")
 public class News implements Serializable {
 

@@ -102,6 +102,8 @@ public class UserServiceImpl implements UserService {
 			}else{
 				user.setRole(User.USER_ROLE.USER);
 			}
+		}else{
+			user.setRole(User.USER_ROLE.USER);
 		}	
 		if (userTransfer.getDatePaid() != null) {
 			user.setDatePaid(userTransfer.getDatePaid());

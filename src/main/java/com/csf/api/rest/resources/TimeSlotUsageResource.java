@@ -21,7 +21,6 @@ import com.csf.api.rest.transfer.model.StringTransfer;
 import com.csf.persistence.entity.TimeSlotUsage;
 import com.csf.persistence.entity.User;
 import com.csf.service.timeslot.TimeSlotService;
-import com.csf.service.user.UserService;
 
 @RestController
 @RequestMapping("/timeslot/usage")
@@ -31,9 +30,6 @@ public class TimeSlotUsageResource {
 
 	@Autowired
 	private TimeSlotService timeSlotService;
-
-	@Autowired
-	private UserService userService;
 
 	@RequestMapping(path = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize(value = "isAuthenticated()")

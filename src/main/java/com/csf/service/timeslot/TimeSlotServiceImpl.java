@@ -198,22 +198,14 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 	}
 
-	// private Boolean checkIfAllBeforeAreFull(Integer iterator, TimeSlot
-	// timeSlots, Map<String, Integer> map) {
-	// TimeSlotTransfer timeSlotTransfer =
-	// TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
-	// Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
-	// if (slotsRemaining > 0) {
-	// openNextPrio = false;
-	// }
-	// timeSlotTransfer.setSlotsRemaining(slotsRemaining);
-	// timeSlotTransfers.add(timeSlotTransfer);
-	// }
-
 	@Override
 	public TimeSlotUsage create(User user, Integer timeSlotId, Date forDate) {
 		if (user.getSessionsLeft() == 0) {
 			throw new RestException("Nemate vise treninga, uplatite clanarinu.");
+		}
+
+		if (!user.isAdmin() && checkIfAfterTommorow(new DateTime(forDate))) {
+			throw new RestException("NE MOZE se zakazivati unapred .!. :P");
 		}
 
 		if (!user.isAdmin() && timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
@@ -226,9 +218,10 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			throw new RestException("Nema vise slobodnih mesta za zeljeni termin..");
 		}
 
-		if (!user.isAdmin() && checkIsTodayAfterThree(new DateTime(forDate))) {
-			throw new RestException(
-					"Zakazivanje treninga nije moguce posle 15h tekuceg dana, ukoliko ima slobodnih mesta pozovite.");
+		TimeSlot existingSlot = timeSlotDao.find(timeSlotId);
+
+		if (checkIsAfterSlotStartDate(existingSlot.getStartsAt().toString(), new DateTime(forDate))) {
+			throw new RestException("Zakazivanje treninga nije moguce, nakon sto je trening poceo.");
 		}
 
 		user.setSessionsLeft(user.getSessionsLeft() - 1);
@@ -245,10 +238,18 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		return timeSlotUsageDao.save(timeSlotUsage);
 	}
 
-	private Boolean checkIsTodayAfterThree(DateTime date) {
+	private Boolean checkIfAfterTommorow(DateTime date) {
+		DateTime now = new DateTime();
+		if ((date.getDayOfYear() - now.getDayOfYear()) > 1) {
+			return true;
+		}
+		return false;
+	}
+
+	private Boolean checkIsAfterSlotStartDate(String slotStartTime, DateTime date) {
 		DateTime now = new DateTime();
 		if (now.getDayOfYear() == date.getDayOfYear()) {
-			if (now.getHourOfDay() >= 15) {
+			if (now.getHourOfDay() >= Integer.parseInt(slotStartTime)) {
 				return true;
 			}
 		} else if (now.getDayOfYear() > date.getDayOfYear()) {
