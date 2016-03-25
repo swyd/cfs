@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -248,8 +250,10 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 	private Boolean checkIsAfterSlotStartDate(String slotStartTime, DateTime date) {
 		DateTime now = new DateTime();
+		DateTimeFormatter dtf = DateTimeFormat.forPattern("HH:mm");
+		DateTime startTime = dtf.parseDateTime(slotStartTime);  
 		if (now.getDayOfYear() == date.getDayOfYear()) {
-			if (now.getHourOfDay() >= Integer.parseInt(slotStartTime)) {
+			if (now.getMinuteOfDay() >= startTime.getMinuteOfDay()) {
 				return true;
 			}
 		} else if (now.getDayOfYear() > date.getDayOfYear()) {
