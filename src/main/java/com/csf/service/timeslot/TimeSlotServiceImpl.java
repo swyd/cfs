@@ -3,8 +3,10 @@ package com.csf.service.timeslot;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -70,8 +72,12 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		if (!user.isAdmin() && !usage.getUser().getId().equals(user.getId())) {
 			throw new RestException("Ne mozete otkazati trening ako ga niste vi zakazali.");
 		}
-		if (!user.isAdmin() && isTodayOrLater(usage.getUsageDate())) {
-			throw new RestException("Ne mozete otkazati trening posle 15h.");
+		if (!user.isAdmin()) {
+			if (!usage.getTimeSlot().getIsInTheMorning() && isTodayLaterThen(usage.getUsageDate(), 12)) {
+				throw new RestException("Ne mozete otkazati trening posle 12h.");
+			} else if (usage.getTimeSlot().getIsInTheMorning() && isTodayLaterThen(usage.getUsageDate(), 0)) {
+				throw new RestException("Ne mozete otkazati trening posle 00h.");
+			}
 		}
 
 		timeSlotUsageDao.delete(id);
@@ -85,11 +91,11 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		}
 	}
 
-	private Boolean isTodayOrLater(Date date) {
+	private Boolean isTodayLaterThen(Date date, Integer time) {
 		DateTime now = new DateTime();
 		DateTime input = new DateTime(date);
 		if (now.getDayOfYear() == input.getDayOfYear()) {
-			if (now.getHourOfDay() >= 15) {
+			if (now.getHourOfDay() >= time) {
 				return true;
 			}
 		} else if (now.getDayOfYear() > input.getDayOfYear()) {
@@ -115,20 +121,17 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 
 	@Override
 	public List<TimeSlotTransfer> findAllWithRemainingForDate(User user, Date date) {
-		List<TimeSlot> timeSlots = new ArrayList<TimeSlot>();
-		Map<String, Integer> remainingMap = new HashMap<String, Integer>();
-		Boolean isAdvanced = user.getIsAdvanced();
-		// TODO implement check for trainer
-		for (TimeSlot timeSlot : timeSlotDao
-				.findAllActiveForType(TIME_SLOT_TYPE.findType(new DateTime(date).getDayOfWeek()))) {
-			if (isAdvanced && timeSlot.getIsAdvanced()) {
-				timeSlots.add(timeSlot);
-			} else if (!isAdvanced && !timeSlot.getIsAdvanced()) {
-				timeSlots.add(timeSlot);
-			}
-		}
+		List<TimeSlot> timeSlotsMorning = timeSlotDao
+				.findAllActiveForType(TIME_SLOT_TYPE.findType(new DateTime(date).getDayOfWeek(), true));
+		List<TimeSlot> timeSlotsAfternoon = timeSlotDao
+				.findAllActiveForType(TIME_SLOT_TYPE.findType(new DateTime(date).getDayOfWeek(), false));
 
-		for (TimeSlot timeSlot : timeSlots) {
+		Map<String, Integer> remainingMap = new HashMap<String, Integer>();
+
+		for (TimeSlot timeSlot : timeSlotsMorning) {
+			remainingMap.put(timeSlot.getStartsAt(), timeSlot.getLimit());
+		}
+		for (TimeSlot timeSlot : timeSlotsAfternoon) {
 			remainingMap.put(timeSlot.getStartsAt(), timeSlot.getLimit());
 		}
 
@@ -141,63 +144,49 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			}
 		}
 
-		return convertToTimeSlotTransferWithRemaining(timeSlots, remainingMap, isAdvanced);
+		List<TimeSlotTransfer> retVal = convertToTimeSlotTransferWithRemaining(timeSlotsMorning, remainingMap);
+		retVal.addAll(convertToTimeSlotTransferWithRemaining(timeSlotsAfternoon, remainingMap));
+		return retVal;
 	}
 
 	private List<TimeSlotTransfer> convertToTimeSlotTransferWithRemaining(List<TimeSlot> timeSlots,
-			Map<String, Integer> remainingMap, Boolean isAdvanced) {
+			Map<String, Integer> remainingMap) {
 		List<TimeSlotTransfer> timeSlotTransfers = new ArrayList<TimeSlotTransfer>();
-
-		if (isAdvanced) {
-			for (TimeSlot timeSlot : timeSlots) {
-				TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
-				timeSlotTransfer.setSlotsRemaining(remainingMap.get(timeSlot.getStartsAt()));
-				timeSlotTransfers.add(timeSlotTransfer);
-			}
-		} else {
-			// Make algorithm and take into account priority of opening slots
-			boolean openNextPrio = true;
-			for (int i = 0; i < timeSlots.size(); i++) {
-				TimeSlot timeSlot = timeSlots.get(i);
-
-				if (i > 0) {
-					// check second
-					if (timeSlot.getPriority() == timeSlots.get(i - 1).getPriority()) {
-						TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
-						Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
-						if (slotsRemaining > 0) {
-							openNextPrio = false;
-						}
-						timeSlotTransfer.setSlotsRemaining(slotsRemaining);
-						timeSlotTransfers.add(timeSlotTransfer);
-					} else {
-						if (remainingMap.get(timeSlot.getStartsAt()) < 14 || openNextPrio) {
-							TimeSlotTransfer timeSlotTransfer = TransferConverterUtil
-									.convertTimeSlotToTransfer(timeSlot);
-							Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
-							if (slotsRemaining > 0) {
-								openNextPrio = false;
-							}
-							timeSlotTransfer.setSlotsRemaining(slotsRemaining);
-							timeSlotTransfers.add(timeSlotTransfer);
-						}
-					}
-				} else {
-					// Add first
-					TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
-					Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
+		Set<Integer> prios = new HashSet<Integer>();
+		boolean openNextPrio = true;
+		for (int i = 0; i < timeSlots.size(); i++) {
+			TimeSlot timeSlot = timeSlots.get(i);
+			TimeSlotTransfer timeSlotTransfer = TransferConverterUtil.convertTimeSlotToTransfer(timeSlot);
+			Integer slotsRemaining = remainingMap.get(timeSlot.getStartsAt());
+			if (i > 0) {
+				if (timeSlot.getPriority() == timeSlots.get(i - 1).getPriority()
+						&& prios.contains(timeSlot.getPriority())) {
 					if (slotsRemaining > 0) {
 						openNextPrio = false;
 					}
+					prios.add(timeSlot.getPriority());
 					timeSlotTransfer.setSlotsRemaining(slotsRemaining);
 					timeSlotTransfers.add(timeSlotTransfer);
+				} else {
+					if (remainingMap.get(timeSlot.getStartsAt()) < timeSlot.getLimit() || openNextPrio) {
+						if (slotsRemaining > 0) {
+							openNextPrio = false;
+						}
+						prios.add(timeSlot.getPriority());
+						timeSlotTransfer.setSlotsRemaining(slotsRemaining);
+						timeSlotTransfers.add(timeSlotTransfer);
+					}
 				}
-
+			} else {
+				if (slotsRemaining > 0) {
+					openNextPrio = false;
+				}
+				prios.add(timeSlot.getPriority());
+				timeSlotTransfer.setSlotsRemaining(slotsRemaining);
+				timeSlotTransfers.add(timeSlotTransfer);
 			}
 		}
-
 		return timeSlotTransfers;
-
 	}
 
 	@Override
@@ -206,8 +195,12 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 			throw new RestException("Nemate vise treninga, uplatite clanarinu.");
 		}
 
+		if (!user.isAdmin() && checkIsMembershipExpired(new DateTime(user.getDateExpiring()))) {
+			throw new RestException("Clanarina vam je istekla. Molimo vas kontaktirajte vaseg trenera.");
+		}
+
 		if (!user.isAdmin() && checkIfAfterTommorow(new DateTime(forDate))) {
-			throw new RestException("NE MOZE se zakazivati unapred .!. :P");
+			throw new RestException("Treninzi se ne mogu zakazivati pre 12h po Srpskom lokalnom vremenu.");
 		}
 
 		if (!user.isAdmin() && timeSlotUsageDao.checkIfExistsUsageForDate(user.getId(), forDate)) {
@@ -215,12 +208,11 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		}
 
 		Long sessionsUsed = timeSlotUsageDao.getSessionsRemainingForDateAndSlot(timeSlotId, forDate);
-
-		if (sessionsUsed == 14) {
-			throw new RestException("Nema vise slobodnih mesta za zeljeni termin..");
-		}
-
 		TimeSlot existingSlot = timeSlotDao.find(timeSlotId);
+		
+//		if (sessionsUsed == existingSlot.getLimit().longValue()) {
+//			throw new RestException("Nema vise slobodnih mesta za zeljeni termin..");
+//		}
 
 		if (checkIsAfterSlotStartDate(existingSlot.getStartsAt().toString(), new DateTime(forDate))) {
 			throw new RestException("Zakazivanje treninga nije moguce, nakon sto je trening poceo.");
@@ -248,10 +240,18 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 		return false;
 	}
 
+	private Boolean checkIsMembershipExpired(DateTime expirationDate) {
+		DateTime now = new DateTime();
+		if (now.isAfter(expirationDate)) {
+			return true;
+		}
+		return false;
+	}
+
 	private Boolean checkIsAfterSlotStartDate(String slotStartTime, DateTime date) {
 		DateTime now = new DateTime();
 		DateTimeFormatter dtf = DateTimeFormat.forPattern("HH:mm");
-		DateTime startTime = dtf.parseDateTime(slotStartTime);  
+		DateTime startTime = dtf.parseDateTime(slotStartTime);
 		if (now.getDayOfYear() == date.getDayOfYear()) {
 			if (now.getMinuteOfDay() >= startTime.getMinuteOfDay()) {
 				return true;

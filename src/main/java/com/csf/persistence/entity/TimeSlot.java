@@ -19,14 +19,19 @@ public class TimeSlot implements Serializable {
 	private static final long serialVersionUID = 6848596770479221825L;
 
 	public enum TIME_SLOT_TYPE {
-		WEEKDAY(1, "Radni dan"), SATURDAY(2, "Subota"), SUNDAY(3, "Nedelja");
+		WEEKDAY_ODD_AFTERNOON(1, "Radni dan neparni popodne", false), WEEKDAY_EVEN_AFTERNOON(4,
+				"Radni dan parni popodne", false), SATURDAY_AFTERNOON(2, "Subota popodne", false), SUNDAY(3, "Nedelja",
+						false), WEEKDAY_ODD_MORNING(5, "Radni dan neparni prepodne", true), WEEKDAY_EVEN_MORNING(6,
+								"Radni dan parni prepodne", true), SATURDAY_MORNING(7, "Subota prepodne", true);
 
 		private int key;
 		private String description;
+		private Boolean isInTheMorning;
 
-		TIME_SLOT_TYPE(int key, String description) {
+		TIME_SLOT_TYPE(int key, String description, Boolean isInTheMorning) {
 			this.key = key;
 			this.description = description;
+			this.isInTheMorning = isInTheMorning;
 		}
 
 		public int getKey() {
@@ -37,13 +42,63 @@ public class TimeSlot implements Serializable {
 			return this.description;
 		}
 
-		public static Integer findType(int dayOfWeek) {
-			if (dayOfWeek <= 5) {
-				return WEEKDAY.getKey();
-			} else if (dayOfWeek == 6) {
-				return SATURDAY.getKey();
-			} else {
+		public Boolean getIsInTheMorning() {
+			return this.isInTheMorning;
+		}
+
+		public static Integer findType(int dayOfWeek, Boolean isInTheMorning) {
+			switch (dayOfWeek) {
+			case 1:
+			case 3:
+			case 5: {
+				if (isInTheMorning) {
+					return WEEKDAY_ODD_MORNING.getKey();
+				} else {
+					return WEEKDAY_ODD_AFTERNOON.getKey();
+				}
+			}
+			case 2:
+			case 4: {
+				if (isInTheMorning) {
+					return WEEKDAY_EVEN_MORNING.getKey();
+				} else {
+					return WEEKDAY_EVEN_AFTERNOON.getKey();
+				}
+			}
+			case 6:
+				if (isInTheMorning) {
+					return SATURDAY_MORNING.getKey();
+				} else {
+					return SATURDAY_AFTERNOON.getKey();
+				}
+			default:
 				return SUNDAY.getKey();
+			}
+		}
+
+		public static Boolean getIsInTheMorning(int dayOfWeek) {
+			switch (dayOfWeek) {
+			case 1: {
+				return WEEKDAY_ODD_AFTERNOON.getIsInTheMorning();
+			}
+			case 2: {
+				return SATURDAY_AFTERNOON.getIsInTheMorning();
+			}
+			case 7: {
+				return SATURDAY_MORNING.getIsInTheMorning();
+			}
+			case 4: {
+				return WEEKDAY_EVEN_AFTERNOON.getIsInTheMorning();
+			}
+			case 5: {
+				return WEEKDAY_ODD_MORNING.getIsInTheMorning();
+			}
+			case 6: {
+				return WEEKDAY_EVEN_MORNING.getIsInTheMorning();
+			}
+			default: {
+				return SUNDAY.getIsInTheMorning();
+			}
 			}
 		}
 	}
@@ -140,6 +195,10 @@ public class TimeSlot implements Serializable {
 
 	public void setPriority(Integer priority) {
 		this.priority = priority;
+	}
+
+	public Boolean getIsInTheMorning() {
+		return TIME_SLOT_TYPE.getIsInTheMorning(this.type);
 	}
 
 }

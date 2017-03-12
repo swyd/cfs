@@ -61,7 +61,7 @@ public class TimeSlotUsageResource {
 			@PathVariable("forDate") @DateTimeFormat(pattern = "dd-MM-yyyy") Date forDate) {
 
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+		
 		if (forDate == null) {
 			forDate = new Date();
 		}
